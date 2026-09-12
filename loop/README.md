@@ -14,9 +14,11 @@ meeting.rtms_stopped ─► generate-notes.js (skill 1, Codex) ─► notes/<id>
                                                       └─ notes.enriched
 ```
 
-Every arrow on the right is a callback to the Slack lane — see
-[CALLBACK.md](CALLBACK.md). The Slack app builds the canvas; nothing here posts
-to Slack except the Polly survey/polls themselves.
+Every arrow on the right is an event: delivered to `LOOP_CALLBACK_URL` (see
+[CALLBACK.md](CALLBACK.md)) and to in-process handlers passed as
+`createLoop({ on: { "notes.ready": fn, "notes.enriched": fn } })` — that is how
+`index.js` writes the Slack canvas (`slack/`). Nothing else here posts to Slack
+except the Polly survey/polls themselves.
 
 ## Files
 

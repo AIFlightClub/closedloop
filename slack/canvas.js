@@ -1,9 +1,14 @@
 import { WebClient } from "@slack/web-api";
 
-const botToken = process.env.SLACK_BOT_TOKEN;
-if (!botToken) throw new Error("SLACK_BOT_TOKEN must be set to use Slack Canvas");
+const botToken = () => {
+  const token = process.env.SLACK_BOT_TOKEN;
+  if (!token) throw new Error("SLACK_BOT_TOKEN must be set to use Slack Canvas");
+  return token;
+};
 
-const client = new WebClient(botToken);
+// Created on first use, so importing this module never needs the token.
+let webClient;
+const client = () => (webClient ??= new WebClient(botToken()));
 const maxMarkdownChars = 900_000;
 
 const splitMarkdown = (markdown) => {
@@ -23,13 +28,13 @@ const splitMarkdown = (markdown) => {
 // Slack Free requires a Canvas to be attached to a channel. Save canvas_id in
 // your database; it is needed for future reads and edits.
 const createChannelCanvas = (channelId, title, markdown) =>
-  client.canvases.create({
+  client().canvases.create({
     channel_id: channelId,
     title,
     document_content: { type: "markdown", markdown },
   });
 
-const deleteCanvas = (canvasId) => client.canvases.delete({ canvas_id: canvasId });
+const deleteCanvas = (canvasId) => client().canvases.delete({ canvas_id: canvasId });
 
 const decodeHtml = (value) =>
   value
@@ -57,11 +62,11 @@ const canvasHtmlToMarkdown = (html) =>
   );
 
 const readMarkdown = async (canvasId) => {
-  const { file } = await client.files.info({ file: canvasId });
+  const { file } = await client().files.info({ file: canvasId });
   if (!file?.url_private_download) throw new Error(`Canvas ${canvasId} has no readable download URL`);
 
   const response = await fetch(file.url_private_download, {
-    headers: { authorization: `Bearer ${botToken}` },
+    headers: { authorization: `Bearer ${botToken()}` },
   });
   if (!response.ok) throw new Error(`Slack Canvas download failed: ${response.status} ${response.statusText}`);
   return canvasHtmlToMarkdown(await response.text());
@@ -70,13 +75,13 @@ const readMarkdown = async (canvasId) => {
 // Slack looks up matching sections rather than returning a whole document.
 // Use returned section IDs for replace/insert_before/insert_after edits.
 const findSections = (canvasId, criteria) =>
-  client.canvases.sections.lookup({ canvas_id: canvasId, criteria });
+  client().canvases.sections.lookup({ canvas_id: canvasId, criteria });
 
 const append = async (canvasId, markdown) => {
   const responses = [];
   for (const chunk of splitMarkdown(markdown)) {
     responses.push(
-      await client.canvases.edit({
+      await client().canvases.edit({
         canvas_id: canvasId,
         changes: [
           {
