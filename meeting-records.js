@@ -35,13 +35,16 @@ export function startRecord(id, transcriptPath, meetingId) {
   const config = readJson(resolve(root, "meeting-config.json"));
   const startedAt = new Date().toISOString();
   const seedDirectory = resolve(root, config.seed_notes_directory);
-  const history = readdirSync(seedDirectory).filter(f => f.endsWith(".md")).sort().map(file => {
+  const seedHistory = readdirSync(seedDirectory).filter(f => f.endsWith(".md")).sort().map(file => {
     const path = resolve(seedDirectory, file);
     return { path, notes: readFileSync(path, "utf8") };
   });
   const previous = Object.values(records()).filter(r => r.seriesId === config.series_id && r.status === "complete" && r.startedAt < startedAt)
     .sort((a, b) => a.startedAt.localeCompare(b.startedAt));
-  for (const record of previous) history.push({ path: record.notesPath, notes: readFileSync(record.notesPath, "utf8"), loopState: readJson(record.loopStatePath) });
+  const predecessor = previous.at(-1);
+  const history = predecessor
+    ? [{ path: predecessor.notesPath, notes: readFileSync(predecessor.notesPath, "utf8"), loopState: readJson(predecessor.loopStatePath) }]
+    : seedHistory.slice(-1);
   const contextPath = resolve(root, "data/contexts", `${basename(transcriptPath, ".txt")}.json`);
   saveJson(contextPath, { config, history });
   return updateRecord(id, { meeting_id: id, streamId: id, zoomMeetingId: meetingId ?? null, seriesId: config.series_id, startedAt,
