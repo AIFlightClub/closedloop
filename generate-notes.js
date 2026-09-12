@@ -1,9 +1,9 @@
 import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
-import { resolve, basename, join } from "node:path";
+import { resolve, join } from "node:path";
 import { tmpdir } from "node:os";
 import { spawn } from "node:child_process";
 import { pathToFileURL } from "node:url";
-import { root, records, readJson, saveJson, updateRecord } from "./meeting-records.js";
+import { root, records, readJson, saveJson, updateRecord, notesPaths } from "./meeting-records.js";
 
 const active = new Set();
 const schema = {
@@ -71,12 +71,10 @@ export async function generateNotes(id) {
       if (!gap.gap_id || !Array.isArray(gap.options) || gap.options.length < 2 || !Array.isArray(gap.audience) || !gap.audience.length) throw new Error("Codex returned an incomplete gap");
     }
     mkdirSync(resolve(root, "notes"), { recursive: true });
-    const stem = basename(record.transcriptPath, ".txt");
-    const notesPath = resolve(root, "notes", `${stem}.md`);
-    const loopStatePath = resolve(root, "notes", `${stem}.loop.json`);
+    const { notesPath, loopStatePath } = notesPaths(id);
     writeFileSync(notesPath, result.notes_markdown + "\n");
     saveJson(loopStatePath, state);
-    updateRecord(id, { status: "complete", notesPath, loopStatePath, completedAt: new Date().toISOString(), error: null });
+    updateRecord(id, { meeting_id: id, status: "complete", notesPath, loopStatePath, completedAt: new Date().toISOString(), error: null });
     console.log(`Meeting notes saved: ${notesPath}`);
   } catch (error) {
     updateRecord(id, { status: "failed", error: error.message });

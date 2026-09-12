@@ -60,7 +60,21 @@ At RTMS start, the app snapshots the committed demo notes plus completed notes
 from this series. On `meeting.rtms_stopped`, it finishes writing the transcript
 and supplies the entire `skills/meeting-loop-notes.md` to Codex.
 
-Outputs: `notes/*.md` and `notes/*.loop.json`. `data/meetings.json` records paths,
+The canonical `meeting_id` is the RTMS stream ID, matching the JSON index key and
+loop state's `meeting_id`. New outputs are `notes/<meeting_id>.md` and
+`notes/<meeting_id>.loop.json` (IDs are URL-encoded for safe filenames).
+The Zoom meeting UUID is stored separately as `zoomMeetingId`.
+
+Fetch notes and their file paths by ID:
+
+```bash
+npm run notes:get -- YOUR_RTMS_STREAM_ID
+```
+
+Code can also import `getMeetingNotes(id)` from `meeting-records.js`. Lookup uses
+the index, so existing files with timestamped names remain accessible too.
+
+`data/meetings.json` records paths,
 context snapshots, timestamps, status, and failures. Generated artifacts are
 ignored by Git. Run only one Node process against these local records.
 
