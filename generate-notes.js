@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, mkdtempSync, rmSync, existsSync } from "node:fs";
 import { resolve, join } from "node:path";
 import { tmpdir } from "node:os";
 import { spawn } from "node:child_process";
@@ -11,6 +11,12 @@ const schema = {
   properties: { notes_markdown: { type: "string" }, loop_state_json: { type: "string", description: "A JSON-encoded complete loop state object following the supplied skill." } },
 };
 
+function codexExecutable() {
+  if (process.env.CODEX_BIN) return process.env.CODEX_BIN;
+  const bundled = "/Applications/ChatGPT.app/Contents/Resources/codex";
+  return existsSync(bundled) ? bundled : "codex";
+}
+
 async function runCodex(prompt) {
   const directory = mkdtempSync(join(tmpdir(), "closedloop-notes-"));
   const schemaPath = join(directory, "schema.json");
@@ -22,7 +28,7 @@ async function runCodex(prompt) {
     if (process.env.CODEX_MODEL) args.push("--model", process.env.CODEX_MODEL);
     args.push("-");
     await new Promise((resolvePromise, reject) => {
-      const child = spawn(process.env.CODEX_BIN || "codex", args, { stdio: ["pipe", "ignore", "pipe"] });
+      const child = spawn(codexExecutable(), args, { stdio: ["pipe", "ignore", "pipe"] });
       let stderr = "";
       let timedOut = false;
       const timeout = setTimeout(() => { timedOut = true; child.kill("SIGKILL"); }, 300_000);

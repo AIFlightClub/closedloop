@@ -51,8 +51,9 @@ timestamp and speaker name. The generated files are ignored by Git.
 
 ## Meeting notes with Codex
 
-Sign in to Codex CLI with `codex login` using your ChatGPT account. Ensure `codex`
-is on PATH, or set `CODEX_BIN` in `.env` to its executable path. `CODEX_MODEL`
+Sign in to Codex CLI with `codex login` using your ChatGPT account. The app
+automatically finds the Codex binary bundled with ChatGPT on macOS. On another
+setup, ensure `codex` is on PATH or set `CODEX_BIN` in `.env`. `CODEX_MODEL`
 is optional. Generation uses your Codex subscription limits and has a five-minute timeout.
 
 `meeting-config.json` supplies the roster, ClosedLoop series, and timezone.
