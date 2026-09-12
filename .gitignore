@@ -24,6 +24,8 @@ lib/linux-x64/*
 # only allow files where we want them
 *.js
 !index.js
+# the Polly module is plain JavaScript
+!polly/**/*.js
 *.c
 *.py
 *.pyi
