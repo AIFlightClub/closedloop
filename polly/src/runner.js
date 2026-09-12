@@ -209,8 +209,9 @@ export class PollRunner {
         return record;
     }
     /** send + watch everything in the request, then write the meeting summary. */
-    async run(request) {
+    async run(request, hooks = {}) {
         const sent = await this.send(request);
+        await hooks.onSent?.(sent);
         const byId = new Map(request.polls.map((poll) => [poll.id, poll]));
         const records = await Promise.all(sent.map((record) => record.status === "open" ? this.watch(record, byId.get(record.id)) : Promise.resolve(record)));
         const summary = this.store.writeSummary(request.meeting_id);

@@ -58,14 +58,14 @@ export function createPolly(options = {}) {
     router: createRouter(deps),
     /** Send and return immediately; watching continues in the background. */
     accept: (raw) => accept(deps, raw),
-    /** Send, watch until closed, write poll_round.json + summary.md. */
-    run: async (raw) => {
+    /** Send, watch until closed, write poll_round.json + summary.md. hooks.onSent(records) fires right after sending. */
+    run: async (raw, hooks = {}) => {
       const { kind, request } = parseAnyRequest(raw, defaults);
-      if (kind !== "survey") return runner.run(request);
-      const outcome = await surveys.run(request);
+      if (kind !== "survey") return runner.run(request, hooks);
+      const outcome = await surveys.run(request, hooks);
       if (outcome.record.status === "failed" && isPlanLimitError(outcome.record.error) && request.fallback_to_polls) {
         log(`${request.meeting_id}: survey not available on this Polly plan — falling back to one poll per question`);
-        const fallback = await runner.run(parsePollRequest(surveyToPolls(request), defaults));
+        const fallback = await runner.run(parsePollRequest(surveyToPolls(request), defaults), hooks);
         return { ...fallback, record: outcome.record, fallback: true };
       }
       return outcome;

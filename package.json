@@ -2,7 +2,7 @@
   "name": "closedloop",
   "version": "1.0.1",
   "type": "module",
-  "description": "ClosedLoop — Zoom RTMS transcripts + Polly MCP polls",
+  "description": "ClosedLoop \u2014 Zoom RTMS transcripts + Polly MCP polls",
   "main": "index.js",
   "scripts": {
     "start": "node --env-file=.env index.js",
@@ -10,7 +10,12 @@
     "notes:get": "node meeting-records.js",
     "polly": "node --env-file-if-exists=.env polly/src/cli.js",
     "polly:auth": "node --env-file-if-exists=.env polly/src/cli.js auth",
-    "test:polly": "node --test \"polly/__tests__/*.test.js\""
+    "test:polly": "node --test \"polly/__tests__/*.test.js\"",
+    "loop": "node --env-file-if-exists=.env loop/cli.js",
+    "loop:demo": "node --env-file-if-exists=.env loop/cli.js demo",
+    "loop:receiver": "node --env-file-if-exists=.env loop/receiver.js",
+    "test:loop": "node --test \"loop/__tests__/*.test.js\"",
+    "test": "npm run test:polly && npm run test:loop"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.30.0",

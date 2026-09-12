@@ -5,6 +5,8 @@
 ### Dev Only
 docs
 transcripts/
+# recorded transcripts used by the demo are tracked
+!demo/transcripts/
 
 ### Build
 dist
@@ -28,6 +30,8 @@ lib/linux-x64/*
 !generate-notes.js
 # the Polly module is plain JavaScript
 !polly/**/*.js
+# the loop module (notes → survey → enriched notes) is plain JavaScript
+!loop/**/*.js
 *.c
 *.py
 *.pyi
@@ -512,6 +516,9 @@ ngrok.yml
 # Generated meeting artifacts
 /data/
 /notes/
+
+# Loop callbacks captured by the dev receiver
+/data/callbacks/
 
 # Polly module runtime state + secrets
 .polly-mcp-token.json
