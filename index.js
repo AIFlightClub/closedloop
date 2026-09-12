@@ -7,9 +7,10 @@ import { finished } from "node:stream/promises";
 import express from "express";
 import { createPolly } from "./polly/index.js";
 import { createLoop } from "./loop/index.js";
-import { records, startRecord, updateRecord } from "./meeting-records.js";
-import { generateNotes } from "./generate-notes.js";
 import { verifySlackRequest } from "./slack/webhook.js";
+import { postMeetingNotes, resetProjectCanvas, slackCanvasId } from "./slack/project-canvas.js";
+import { getMeetingNotes, records, startRecord, updateRecord } from "./meeting-records.js";
+import { generateNotes } from "./generate-notes.js";
 
 const clients = new Map();
 const transcriptsDirectory = join(process.cwd(), "transcripts");
@@ -33,7 +34,7 @@ const createTranscriptPath = (streamId) => {
 // Webhook event handler for RTMS events from Zoom.
 // Taking (payload, req, res) opts into the SDK's raw mode, which lets us answer
 // Zoom's endpoint URL validation challenge ourselves.
-const handleZoomWebhook = ({ event, payload }, req, res) => {
+const handleZoomWebhook = async ({ event, payload }, req, res) => {
   const respond = (status, body) => {
     res.writeHead(status, { "Content-Type": "application/json" });
     res.end(JSON.stringify(body));
@@ -94,6 +95,22 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
       }
       // Notes are in: survey → results → enriched notes, with a callback after each stage.
       if (loop) await loop.afterNotes(streamId).catch((error) => console.error(`Loop for ${streamId} failed:`, error.message));
+      const completed = records()[streamId];
+      if (completed?.status === "complete" && !completed.slackCanvasPostedAt) {
+        try {
+          await postMeetingNotes(getMeetingNotes(streamId));
+          updateRecord(streamId, {
+            slackCanvasId: slackCanvasId(),
+            slackCanvasPostedAt: new Date().toISOString(),
+            slackCanvasError: null,
+          });
+          console.log(`Meeting notes posted to Slack Canvas: ${streamId}`);
+        } catch (error) {
+          // Notes remain available on disk; Canvas delivery can be retried.
+          updateRecord(streamId, { slackCanvasError: error.message });
+          console.error(`Failed to post meeting ${streamId} to Slack Canvas:`, error.message);
+        }
+      }
     })();
 
     return;
@@ -112,7 +129,7 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
   const client = new rtms.Client();
   const transcriptPath = createTranscriptPath(streamId);
   try {
-    startRecord(streamId, transcriptPath, payload?.meeting_uuid);
+    await startRecord(streamId, transcriptPath, payload?.meeting_uuid);
   } catch (error) {
     console.error("Cannot prepare meeting context:", error.message);
     return;
@@ -162,6 +179,25 @@ app.post("/event_subscriptions", express.raw({ type: "application/json" }), (req
 
   res.sendStatus(200); // Acknowledge Slack before processing an event.
   console.log("Slack event:", body.type, body.event?.type);
+});
+
+// This endpoint is deliberately protected: it deletes and recreates the
+// channel Canvas. Set ADMIN_API_KEY, then send it as x-admin-api-key.
+app.post("/admin/canvas/reset", express.json(), async (req, res) => {
+  if (!process.env.ADMIN_API_KEY || req.get("x-admin-api-key") !== process.env.ADMIN_API_KEY)
+    return res.sendStatus(401);
+  try {
+    const { readFile, readdir } = await import("node:fs/promises");
+    const { resolve } = await import("node:path");
+    const directory = resolve(process.cwd(), "demo/meetings");
+    const files = (await readdir(directory)).filter((file) => file.endsWith(".md")).sort();
+    const notes = await Promise.all(files.map((file) => readFile(resolve(directory, file), "utf8")));
+    const canvasId = await resetProjectCanvas(notes.join("\n\n---\n\n"));
+    res.status(201).json({ canvas_id: canvasId, imported_files: files });
+  } catch (error) {
+    console.error("Canvas reset failed:", error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 if (polly) {
