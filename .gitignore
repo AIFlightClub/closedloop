@@ -510,3 +510,9 @@ ngrok.yml
 # Generated meeting artifacts
 /data/
 /notes/
+
+# Polly module runtime state + secrets
+.polly-mcp-token.json
+polly/results/
+polly/inbox/*
+!polly/inbox/.gitkeep

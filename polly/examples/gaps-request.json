@@ -1,0 +1,72 @@
+{
+  "meeting_id": "CL-sync-06",
+  "meeting_date": "2026-09-10",
+  "channel": "#closed-loop-project",
+  "requested_by": "meeting-notes skill (loop_state.gaps)",
+  "required_attendees": ["obaid", "zaid", "nouman", "sharjeel"],
+  "roster": {
+    "obaid": { "name": "Obaid Khawaja" },
+    "zaid": { "name": "Zaid" },
+    "nouman": { "name": "mna.nouman" },
+    "sharjeel": { "name": "Sharjeel Hassan" }
+  },
+  "delivery": "auto",
+  "close_after_minutes": 10,
+  "min_votes": 1,
+  "settle_seconds": 30,
+  "gaps": [
+    {
+      "gap_id": "CL-Q-03.decision",
+      "field": "decision",
+      "ask": "Demo on live RTMS or the recorded fallback?",
+      "options": ["Live RTMS — go for it", "Recorded fallback — play it safe", "Decide Saturday morning once entitlement is known"],
+      "audience": ["obaid", "zaid", "nouman", "sharjeel"],
+      "rounds_asked": 0
+    },
+    {
+      "gap_id": "CL-A-07.priority",
+      "item": "Zoom side-panel skeleton",
+      "field": "priority",
+      "ask": "What priority is the Zoom side-panel skeleton?",
+      "options": ["P0 — blocks the demo", "P1 — needed today", "P2 — nice to have", "Drop it"],
+      "audience": ["nouman"],
+      "rounds_asked": 0
+    },
+    {
+      "gap_id": "CL-A-08.priority",
+      "item": "Intervention cooldown logic",
+      "field": "priority",
+      "ask": "What priority is the intervention cooldown logic?",
+      "options": ["P0 — blocks the demo", "P1 — needed today", "P2 — nice to have", "Drop it"],
+      "audience": ["zaid"],
+      "rounds_asked": 0
+    },
+    {
+      "gap_id": "CL-A-08.due",
+      "item": "Intervention cooldown logic",
+      "field": "due_date",
+      "ask": "When is the intervention cooldown logic due?",
+      "options": ["Fri 11 Sep", "Sat 12 Sep — before the demo", "After the hackathon", "No date needed"],
+      "audience": ["zaid"],
+      "rounds_asked": 0
+    },
+    {
+      "gap_id": "CL-A-09.priority",
+      "item": "Demo script and poll question copy",
+      "field": "priority",
+      "ask": "What priority is the demo script and poll copy?",
+      "options": ["P0 — blocks the demo", "P1 — needed today", "P2 — nice to have", "Drop it"],
+      "audience": ["obaid"],
+      "rounds_asked": 0
+    },
+    {
+      "gap_id": "CL-A-02.status",
+      "item": "Slack canvas write/edit path spike",
+      "field": "status_update",
+      "ask": "Where did the canvas write path spike land?",
+      "options": ["Done — channel canvas works", "Done — standalone blocked, using channel canvas", "Not started", "Blocked on something else"],
+      "audience": ["sharjeel"],
+      "rounds_asked": 1
+    }
+  ]
+}

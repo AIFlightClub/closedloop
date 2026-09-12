@@ -1,0 +1,72 @@
+{
+  "meeting_id": "CL-sync-06",
+  "meeting_date": "2026-09-10",
+  "channel": "#closed-loop-project",
+  "requested_by": "meeting-loop-polly skill",
+  "min_votes": 1,
+  "settle_seconds": 60,
+  "survey": {
+    "draftId": "closedloop-sync-6-1757667000",
+    "title": "ClosedLoop Sync — confirm and close the loop",
+    "appeal": "Three minutes. Confirm Thursday's decisions and fill the two blanks the meeting left open. Full notes are in the channel canvas.",
+    "questions": [
+      {
+        "type": "multipleChoice",
+        "allowMultipleAnswers": true,
+        "required": false,
+        "title": "Confirm the decisions from Thursday's sync — check every one you agree with",
+        "choices": [
+          "CL-D-06 — Side panel shows three buckets (Resolved / Needs attention / Up next) and accumulates quietly",
+          "CL-D-07 — Interventions capped at 3 pushes per 30 minutes, none within 5 minutes of each other",
+          "None of these — see my comment"
+        ]
+      },
+      {
+        "type": "openEnded",
+        "required": false,
+        "title": "Anything the notes missed, or anything captured wrong? Add it here."
+      },
+      {
+        "type": "multipleChoice",
+        "required": true,
+        "title": "Who should own \"CL-A-03 — Launch-readiness review and dry run\"? It has had no owner for three meetings.",
+        "choices": ["Obaid", "Zaid", "Nouman", "Sharjeel", "Someone else / not yet decided"]
+      },
+      {
+        "type": "multipleChoice",
+        "required": true,
+        "title": "CL-Q-03 — do we demo on live RTMS or the recorded fallback?",
+        "choices": ["Live RTMS — go for it", "Recorded fallback — play it safe", "Decide Saturday morning once entitlement is known"]
+      },
+      {
+        "type": "ranked",
+        "required": true,
+        "rankCount": 5,
+        "title": "Rank the open action items by priority — most urgent first",
+        "choices": [
+          "CL-A-01 — Confirm Zoom RTMS entitlement and credits",
+          "CL-A-02 — Slack canvas write/edit path spike",
+          "CL-A-03 — Launch-readiness review and dry run",
+          "CL-A-07 — Zoom side-panel skeleton",
+          "CL-A-08 — Intervention cooldown and priority-ordering logic"
+        ]
+      },
+      { "type": "1To5", "required": false, "title": "Rate this meeting" },
+      { "type": "openEnded", "required": false, "title": "Anything we should cover next time?" }
+    ],
+    "userNames": ["Obaid", "Zaid", "Nouman", "Sharjeel"],
+    "closeAt": "+18h",
+    "anonymityLevel": "nonAnonymous",
+    "resultsVisibility": "onClose",
+    "reminderCount": 0
+  },
+  "question_map": [
+    { "index": 0, "role": "ratification", "decisions": ["CL-D-06", "CL-D-07"] },
+    { "index": 1, "role": "missed_items", "readback": "human_only" },
+    { "index": 2, "role": "gap", "gap_id": "CL-A-03.owner", "item": "Launch-readiness review and dry run", "field": "owner" },
+    { "index": 3, "role": "gap", "gap_id": "CL-Q-03.decision", "field": "decision" },
+    { "index": 4, "role": "ranking", "items": ["CL-A-01", "CL-A-02", "CL-A-03", "CL-A-07", "CL-A-08"] },
+    { "index": 5, "role": "meeting_rating", "readback": "organiser_only" },
+    { "index": 6, "role": "next_agenda", "readback": "human_only" }
+  ]
+}
