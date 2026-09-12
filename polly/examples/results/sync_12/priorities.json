@@ -1,0 +1,87 @@
+{
+  "id": "priorities",
+  "meeting_id": "sync_12",
+  "kind": "ranked",
+  "question": "Rank these action items — what do we do first?",
+  "options": [
+    "Event discovery: search filters",
+    "Registration flow: confirmation emails",
+    "Partner integration: sandbox access",
+    "Analytics: dashboard v1"
+  ],
+  "context": "4 new actions, all have owners, none have agreed priority",
+  "channel": "#closed-loop-project",
+  "audience": [],
+  "delivery": "channel",
+  "meta": {
+    "action_ids": [
+      "a_discovery_filters",
+      "a_registration_emails",
+      "a_partner_sandbox",
+      "a_analytics_dashboard"
+    ]
+  },
+  "status": "closed",
+  "votes": 14,
+  "choices": [
+    {
+      "text": "Event discovery: search filters",
+      "votes": 41,
+      "percentage": 32
+    },
+    {
+      "text": "Registration flow: confirmation emails",
+      "votes": 30,
+      "percentage": 23.4
+    },
+    {
+      "text": "Partner integration: sandbox access",
+      "votes": 35,
+      "percentage": 27.3
+    },
+    {
+      "text": "Analytics: dashboard v1",
+      "votes": 22,
+      "percentage": 17.2
+    }
+  ],
+  "ranking": [
+    {
+      "rank": 1,
+      "option": "Event discovery: search filters",
+      "score": 41,
+      "percentage": 32
+    },
+    {
+      "rank": 2,
+      "option": "Partner integration: sandbox access",
+      "score": 35,
+      "percentage": 27.3
+    },
+    {
+      "rank": 3,
+      "option": "Registration flow: confirmation emails",
+      "score": 30,
+      "percentage": 23.4
+    },
+    {
+      "rank": 4,
+      "option": "Analytics: dashboard v1",
+      "score": 22,
+      "percentage": 17.2
+    }
+  ],
+  "created_at": "2026-09-12T07:48:44.085Z",
+  "updated_at": "2026-09-12T07:48:44.090Z",
+  "polly": {
+    "id": "polly_closedloop_sync_12_priorities",
+    "type": "poll",
+    "draft_id": "closedloop_sync_12_priorities",
+    "results_url": "https://app.polly.ai/results/closedloop_sync_12_priorities",
+    "close_at": null,
+    "sent_at": "2026-09-12T07:48:44.086Z"
+  },
+  "winner": "Event discovery: search filters",
+  "closed_by": "polly_close_at",
+  "closed_at": "2026-09-12T07:48:44.090Z"
+}

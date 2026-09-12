@@ -1,0 +1,103 @@
+{
+  "meeting_id": "CL-sync-06",
+  "fired_at": "2026-09-12T07:48:44.100Z",
+  "closed_at": "2026-09-12T07:48:44.107Z",
+  "respondents": 4,
+  "complete": true,
+  "results": [
+    {
+      "gap_id": "CL-A-07.priority",
+      "item": "Zoom side-panel skeleton",
+      "field": "priority",
+      "votes": 1,
+      "counts": {
+        "P1 — needed today": 1,
+        "P0 — blocks the demo": 0,
+        "P2 — nice to have": 0,
+        "Drop it": 0
+      },
+      "poll_id": "polly_closedloop_CL-sync-06_CL-A-07_priority",
+      "status": "closed",
+      "winning_option": "P1 — needed today",
+      "resolution": "filled"
+    },
+    {
+      "gap_id": "CL-Q-03.decision",
+      "field": "decision",
+      "votes": 4,
+      "counts": {
+        "Live RTMS — go for it": 3,
+        "Recorded fallback — play it safe": 1,
+        "Decide Saturday morning once entitlement is known": 0
+      },
+      "poll_id": "polly_closedloop_CL-sync-06_CL-Q-03_decision",
+      "status": "closed",
+      "winning_option": "Live RTMS — go for it",
+      "resolution": "filled"
+    },
+    {
+      "gap_id": "CL-A-08.due",
+      "item": "Intervention cooldown logic",
+      "field": "due_date",
+      "votes": 1,
+      "counts": {
+        "No date needed": 1,
+        "Fri 11 Sep": 0,
+        "Sat 12 Sep — before the demo": 0,
+        "After the hackathon": 0
+      },
+      "poll_id": "polly_closedloop_CL-sync-06_CL-A-08_due",
+      "status": "closed",
+      "winning_option": "No date needed",
+      "resolution": "escape_hatch"
+    },
+    {
+      "gap_id": "CL-A-08.priority",
+      "item": "Intervention cooldown logic",
+      "field": "priority",
+      "votes": 1,
+      "counts": {
+        "P1 — needed today": 1,
+        "P0 — blocks the demo": 0,
+        "P2 — nice to have": 0,
+        "Drop it": 0
+      },
+      "poll_id": "polly_closedloop_CL-sync-06_CL-A-08_priority",
+      "status": "closed",
+      "winning_option": "P1 — needed today",
+      "resolution": "filled"
+    },
+    {
+      "gap_id": "CL-A-09.priority",
+      "item": "Demo script and poll question copy",
+      "field": "priority",
+      "votes": 1,
+      "counts": {
+        "P0 — blocks the demo": 1,
+        "P1 — needed today": 0,
+        "P2 — nice to have": 0,
+        "Drop it": 0
+      },
+      "poll_id": "polly_closedloop_CL-sync-06_CL-A-09_priority",
+      "status": "closed",
+      "winning_option": "P0 — blocks the demo",
+      "resolution": "filled"
+    },
+    {
+      "gap_id": "CL-A-02.status",
+      "item": "Slack canvas write/edit path spike",
+      "field": "status_update",
+      "votes": 1,
+      "counts": {
+        "Done — standalone blocked, using channel canvas": 1,
+        "Done — channel canvas works": 0,
+        "Not started": 0,
+        "Blocked on something else": 0
+      },
+      "poll_id": "polly_closedloop_CL-sync-06_CL-A-02_status",
+      "status": "closed",
+      "winning_option": "Done — standalone blocked, using channel canvas",
+      "resolution": "filled"
+    }
+  ]
+}

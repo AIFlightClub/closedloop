@@ -1,0 +1,37 @@
+{
+  "meeting_id": "sync_12",
+  "fired_at": "2026-09-12T07:48:44.086Z",
+  "closed_at": "2026-09-12T07:48:44.090Z",
+  "respondents": 14,
+  "complete": true,
+  "results": [
+    {
+      "gap_id": "priorities",
+      "votes": 14,
+      "counts": {
+        "Event discovery: search filters": 41,
+        "Partner integration: sandbox access": 35,
+        "Registration flow: confirmation emails": 30,
+        "Analytics: dashboard v1": 22
+      },
+      "poll_id": "polly_closedloop_sync_12_priorities",
+      "status": "closed",
+      "winning_option": "Event discovery: search filters",
+      "resolution": "filled"
+    },
+    {
+      "gap_id": "owner_analytics",
+      "votes": 14,
+      "counts": {
+        "Zaid": 9,
+        "Nouman": 3,
+        "Sharjeel": 2,
+        "Obaid": 0
+      },
+      "poll_id": "polly_closedloop_sync_12_owner_analytics",
+      "status": "closed",
+      "winning_option": "Zaid",
+      "resolution": "filled"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": "CL-Q-03.decision",
+  "meeting_id": "CL-sync-06",
+  "kind": "single",
+  "question": "Demo on live RTMS or the recorded fallback?",
+  "options": [
+    "Live RTMS — go for it",
+    "Recorded fallback — play it safe",
+    "Decide Saturday morning once entitlement is known"
+  ],
+  "channel": "#closed-loop-project",
+  "audience": [
+    "obaid",
+    "zaid",
+    "nouman",
+    "sharjeel"
+  ],
+  "delivery": "channel",
+  "meta": {
+    "gap_id": "CL-Q-03.decision",
+    "field": "decision",
+    "audience": [
+      "obaid",
+      "zaid",
+      "nouman",
+      "sharjeel"
+    ],
+    "rounds_asked": 0
+  },
+  "status": "closed",
+  "votes": 4,
+  "choices": [
+    {
+      "text": "Live RTMS — go for it",
+      "votes": 3,
+      "percentage": 75
+    },
+    {
+      "text": "Recorded fallback — play it safe",
+      "votes": 1,
+      "percentage": 25
+    },
+    {
+      "text": "Decide Saturday morning once entitlement is known",
+      "votes": 0,
+      "percentage": 0
+    }
+  ],
+  "ranking": [
+    {
+      "rank": 1,
+      "option": "Live RTMS — go for it",
+      "score": 3,
+      "percentage": 75
+    },
+    {
+      "rank": 2,
+      "option": "Recorded fallback — play it safe",
+      "score": 1,
+      "percentage": 25
+    },
+    {
+      "rank": 3,
+      "option": "Decide Saturday morning once entitlement is known",
+      "score": 0,
+      "percentage": 0
+    }
+  ],
+  "created_at": "2026-09-12T07:48:44.100Z",
+  "updated_at": "2026-09-12T07:48:44.104Z",
+  "polly": {
+    "id": "polly_closedloop_CL-sync-06_CL-Q-03_decision",
+    "type": "poll",
+    "draft_id": "closedloop_CL-sync-06_CL-Q-03_decision",
+    "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-Q-03_decision",
+    "close_at": null,
+    "sent_at": "2026-09-12T07:48:44.100Z"
+  },
+  "winner": "Live RTMS — go for it",
+  "closed_by": "polly_close_at",
+  "closed_at": "2026-09-12T07:48:44.104Z"
+}

@@ -3,6 +3,8 @@ import rtms from "@zoom/rtms";
 import crypto from "node:crypto";
 import { createWriteStream, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import express from "express";
+import { createPolly } from "./polly/index.js";
 
 const clients = new Map();
 const transcriptsDirectory = join(process.cwd(), "transcripts");
@@ -16,10 +18,10 @@ const createTranscriptPath = (streamId) => {
   return join(transcriptsDirectory, `${startedAt}-${safeStreamId}.txt`);
 };
 
-// Set up webhook event handler to receive RTMS events from Zoom.
+// Webhook event handler for RTMS events from Zoom.
 // Taking (payload, req, res) opts into the SDK's raw mode, which lets us answer
 // Zoom's endpoint URL validation challenge ourselves.
-rtms.onWebhookEvent(({ event, payload }, req, res) => {
+const handleZoomWebhook = ({ event, payload }, req, res) => {
   const respond = (status, body) => {
     res.writeHead(status, { "Content-Type": "application/json" });
     res.end(JSON.stringify(body));
@@ -102,4 +104,23 @@ rtms.onWebhookEvent(({ event, payload }, req, res) => {
 
   // Join the meeting using the webhook payload directly
   client.join(payload);
+};
+
+// One server for everything: the Zoom webhook (same port/path the SDK used, so
+// the ngrok URL in the Marketplace app keeps working) and the Polly module's
+// API + inbox. The webhook route is registered first and reads the raw body
+// itself, so no body parser touches it.
+const app = express();
+const zoomPath = process.env.ZM_RTMS_PATH || "/";
+const port = Number(process.env.ZM_RTMS_PORT || 8080);
+app.post(zoomPath, rtms.createWebhookHandler(handleZoomWebhook, zoomPath));
+
+if (process.env.POLLY_ENABLED !== "false") {
+  const polly = createPolly();
+  app.use("/polls", polly.router);
+  polly.startInbox();
+}
+
+app.listen(port, () => {
+  console.log(`Listening on http://localhost:${port} — Zoom webhook: POST ${zoomPath}${process.env.POLLY_ENABLED !== "false" ? " · Polly: POST /polls" : ""}`);
 });

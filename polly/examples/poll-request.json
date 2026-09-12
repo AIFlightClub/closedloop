@@ -1,0 +1,35 @@
+{
+  "meeting_id": "sync_12",
+  "channel": "#closed-loop-project",
+  "requested_by": "closedloop-handler",
+  "polls": [
+    {
+      "id": "priorities",
+      "kind": "ranked",
+      "question": "Rank these action items — what do we do first?",
+      "options": [
+        "Event discovery: search filters",
+        "Registration flow: confirmation emails",
+        "Partner integration: sandbox access",
+        "Analytics: dashboard v1"
+      ],
+      "context": "4 new actions, all have owners, none have agreed priority",
+      "close_after_minutes": 10,
+      "min_votes": 3,
+      "settle_seconds": 30,
+      "meta": {
+        "action_ids": ["a_discovery_filters", "a_registration_emails", "a_partner_sandbox", "a_analytics_dashboard"]
+      }
+    },
+    {
+      "id": "owner_analytics",
+      "kind": "single",
+      "question": "Who owns \"Analytics: dashboard v1\"?",
+      "options": ["Zaid", "Nouman", "Sharjeel", "Obaid"],
+      "context": "This action item left the meeting without an assignee",
+      "close_after_minutes": 10,
+      "min_votes": 3,
+      "meta": { "action_id": "a_analytics_dashboard" }
+    }
+  ]
+}
