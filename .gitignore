@@ -24,6 +24,8 @@ lib/linux-x64/*
 # only allow files where we want them
 *.js
 !index.js
+!meeting-records.js
+!generate-notes.js
 *.c
 *.py
 *.pyi
@@ -505,3 +507,6 @@ dist
 .pnp.*
 # local ngrok config (contains authtoken)
 ngrok.yml
+# Generated meeting artifacts
+/data/
+/notes/

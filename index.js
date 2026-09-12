@@ -3,6 +3,9 @@ import rtms from "@zoom/rtms";
 import crypto from "node:crypto";
 import { createWriteStream, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { finished } from "node:stream/promises";
+import { records, startRecord, updateRecord } from "./meeting-records.js";
+import { generateNotes } from "./generate-notes.js";
 
 const clients = new Map();
 const transcriptsDirectory = join(process.cwd(), "transcripts");
@@ -62,10 +65,21 @@ rtms.onWebhookEvent(({ event, payload }, req, res) => {
       return;
     }
 
-    meeting.client.leave();
-    meeting.transcriptStream.end();
+    meeting.stopping = true;
     clients.delete(streamId);
-    console.log(`Transcript saved to ${meeting.transcriptPath}`);
+    void (async () => {
+      try {
+        meeting.client.leave();
+        const flushed = finished(meeting.transcriptStream);
+        meeting.transcriptStream.end();
+        await flushed;
+        updateRecord(streamId, { stoppedAt: new Date().toISOString(), status: "pending" });
+        await generateNotes(streamId);
+      } catch (error) {
+        updateRecord(streamId, { status: "failed", error: error.message });
+        console.error(`Meeting ${streamId} failed:`, error.message);
+      }
+    })();
 
     return;
   } else if (event !== "meeting.rtms_started") {
@@ -79,19 +93,28 @@ rtms.onWebhookEvent(({ event, payload }, req, res) => {
   }
 
   // Create a new RTMS client for the stream if it doesn't exist
+  if (clients.has(streamId) || records()[streamId]) return;
   const client = new rtms.Client();
   const transcriptPath = createTranscriptPath(streamId);
+  try {
+    startRecord(streamId, transcriptPath, payload?.meeting_uuid);
+  } catch (error) {
+    console.error("Cannot prepare meeting context:", error.message);
+    return;
+  }
   const transcriptStream = createWriteStream(transcriptPath, { flags: "a" });
 
   transcriptStream.on("error", (error) => {
     console.error(`Failed to write transcript ${transcriptPath}:`, error);
   });
 
-  clients.set(streamId, { client, transcriptStream, transcriptPath });
+  const meeting = { client, transcriptStream, transcriptPath, stopping: false };
+  clients.set(streamId, meeting);
   transcriptStream.write(`# Zoom RTMS transcript\n# Stream: ${streamId}\n# Started: ${new Date().toISOString()}\n\n`);
   console.log(`Writing live transcript to ${transcriptPath}`);
 
   client.onTranscriptData((data, size, timestamp, metadata) => {
+    if (meeting.stopping || transcriptStream.destroyed) return;
     const speaker = metadata?.userName || "Unknown speaker";
     const text = data.toString();
     const line = `[${timestamp}] ${speaker}: ${text}\n`;

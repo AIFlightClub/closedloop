@@ -49,6 +49,32 @@ Each RTMS meeting writes its live transcript to a separate timestamped file in
 `transcripts/`. Transcript lines are appended as they arrive and include the RTMS
 timestamp and speaker name. The generated files are ignored by Git.
 
+## Meeting notes with Codex
+
+Sign in to Codex CLI with `codex login` using your ChatGPT account. Ensure `codex`
+is on PATH, or set `CODEX_BIN` in `.env` to its executable path. `CODEX_MODEL`
+is optional. Generation uses your Codex subscription limits and has a five-minute timeout.
+
+`meeting-config.json` supplies the roster, ClosedLoop series, and timezone.
+At RTMS start, the app snapshots the committed demo notes plus completed notes
+from this series. On `meeting.rtms_stopped`, it finishes writing the transcript
+and supplies the entire `skills/meeting-loop-notes.md` to Codex.
+
+Outputs: `notes/*.md` and `notes/*.loop.json`. `data/meetings.json` records paths,
+context snapshots, timestamps, status, and failures. Generated artifacts are
+ignored by Git. Run only one Node process against these local records.
+
+Retry a stopped meeting after a generation failure:
+
+```bash
+npm run notes:retry -- YOUR_RTMS_STREAM_ID
+```
+
+Completed records are not regenerated. Failed generation retains the transcript.
+RTMS stopping triggers notes even if Zoom continues; restarting RTMS creates a new
+stream record. No polls are sent. Completed local runs become history; use a fresh
+checkout without generated artifacts to replay the demo from the seed meetings.
+
 ## 🎯 Basic Usage
 
 Here's how you can implement the SDK yourself.
