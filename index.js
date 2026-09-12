@@ -6,6 +6,7 @@ import { join } from "node:path";
 import { finished } from "node:stream/promises";
 import express from "express";
 import { createPolly } from "./polly/index.js";
+import { createLoop } from "./loop/index.js";
 import { records, startRecord, updateRecord } from "./meeting-records.js";
 import { generateNotes } from "./generate-notes.js";
 
@@ -13,6 +14,13 @@ const clients = new Map();
 const transcriptsDirectory = join(process.cwd(), "transcripts");
 
 mkdirSync(transcriptsDirectory, { recursive: true });
+
+// The Polly module and the loop that runs on top of it. POLLY_ENABLED=false turns
+// both off; LOOP_ENABLED=false keeps the Polly API but no automatic survey,
+// enrichment or live polls.
+const port = Number(process.env.ZM_RTMS_PORT || 8080);
+const polly = process.env.POLLY_ENABLED !== "false" ? createPolly() : null;
+const loop = polly && process.env.LOOP_ENABLED !== "false" ? createLoop({ polly, port }) : null;
 
 const createTranscriptPath = (streamId) => {
   const startedAt = new Date().toISOString().replace(/[:.]/g, "-");
@@ -75,12 +83,16 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
         const flushed = finished(meeting.transcriptStream);
         meeting.transcriptStream.end();
         await flushed;
+        loop?.live.stop(streamId);
         updateRecord(streamId, { stoppedAt: new Date().toISOString(), status: "pending" });
         await generateNotes(streamId);
       } catch (error) {
         updateRecord(streamId, { status: "failed", error: error.message });
         console.error(`Meeting ${streamId} failed:`, error.message);
+        return;
       }
+      // Notes are in: survey → results → enriched notes, with a callback after each stage.
+      if (loop) await loop.afterNotes(streamId).catch((error) => console.error(`Loop for ${streamId} failed:`, error.message));
     })();
 
     return;
@@ -110,7 +122,9 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
     console.error(`Failed to write transcript ${transcriptPath}:`, error);
   });
 
-  const meeting = { client, transcriptStream, transcriptPath, stopping: false };
+  // The live detector watches the transcript for a poll-worthy moment (an explicit
+  // "let's poll this", an A-or-B with no call, an action with no owner).
+  const meeting = { client, transcriptStream, transcriptPath, stopping: false, live: loop?.live.start(streamId) ?? null };
   clients.set(streamId, meeting);
   transcriptStream.write(`# Zoom RTMS transcript\n# Stream: ${streamId}\n# Started: ${new Date().toISOString()}\n\n`);
   console.log(`Writing live transcript to ${transcriptPath}`);
@@ -123,6 +137,7 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
 
     console.log(line.trimEnd());
     transcriptStream.write(line);
+    meeting.live?.push({ speaker, text, ts: timestamp });
   });
 
   // Join the meeting using the webhook payload directly
@@ -130,20 +145,19 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
 };
 
 // One server for everything: the Zoom webhook (same port/path the SDK used, so
-// the ngrok URL in the Marketplace app keeps working) and the Polly module's
-// API + inbox. The webhook route is registered first and reads the raw body
-// itself, so no body parser touches it.
+// the ngrok URL in the Marketplace app keeps working), the Polly module's API +
+// inbox, and the loop's API. The webhook route is registered first and reads
+// the raw body itself, so no body parser touches it.
 const app = express();
 const zoomPath = process.env.ZM_RTMS_PATH || "/";
-const port = Number(process.env.ZM_RTMS_PORT || 8080);
 app.post(zoomPath, rtms.createWebhookHandler(handleZoomWebhook, zoomPath));
 
-if (process.env.POLLY_ENABLED !== "false") {
-  const polly = createPolly();
+if (polly) {
   app.use("/polls", polly.router);
   polly.startInbox();
 }
+if (loop) app.use("/loop", loop.router);
 
 app.listen(port, () => {
-  console.log(`Listening on http://localhost:${port} — Zoom webhook: POST ${zoomPath}${process.env.POLLY_ENABLED !== "false" ? " · Polly: POST /polls" : ""}`);
+  console.log(`Listening on http://localhost:${port} — Zoom webhook: POST ${zoomPath}${polly ? " · Polly: /polls" : ""}${loop ? ` · Loop: /loop (callback: ${loop.notifier.url ?? "none"})` : ""}`);
 });

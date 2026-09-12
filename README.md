@@ -93,6 +93,24 @@ RTMS stopping triggers notes even if Zoom continues; restarting RTMS creates a n
 stream record. No polls are sent. Completed local runs become history; use a fresh
 checkout without generated artifacts to replay the demo from the seed meetings.
 
+## The loop: survey, results, enriched notes
+
+Once notes exist the loop continues on its own: a Polly survey built from the
+notes' decisions, gaps and open items is posted in `POLLY_CHANNEL`, watched until
+it closes, read back into `polly/results/<id>/poll_round.json`, and merged into
+the notes with the notes skill's Enrich mode. During the meeting a live detector
+fires a quick poll when someone asks for one or the room is stuck on a choice.
+Each stage is handed to the Slack app through a signed webhook
+(`LOOP_CALLBACK_URL`). Details: [loop/README.md](loop/README.md) and
+[loop/CALLBACK.md](loop/CALLBACK.md); the Polly module itself:
+[polly/README.md](polly/README.md).
+
+Run the whole thing from a recorded transcript, no Zoom needed:
+
+```bash
+npm run loop -- demo demo/transcripts/sync-07-2026-09-12.txt --live --wait
+```
+
 ## 🎯 Basic Usage
 
 Here's how you can implement the SDK yourself.

@@ -1,0 +1,42 @@
+# Zoom RTMS transcript
+# Stream: demo-sync-07
+# Started: 2026-09-12T05:00:00.000Z
+
+[1789189200000] Obaid: Okay, recording is on and the ClosedLoop agent is in the room, so this is sync seven, demo day. Agenda: RTMS entitlement, the canvas write path, the live versus recorded call, rehearsal and run of show, and launch comms if we get to it.
+[1789189215000] Nouman: Entitlement first. CL-A-01 is done, Zoom confirmed the RTMS entitlement yesterday afternoon and the credits are on the account. We streamed a full test meeting last night.
+[1789189230000] Obaid: Great, so that closes A-01 after three slips. Sharjeel, the canvas spike?
+[1789189242000] Sharjeel: CL-A-02 landed. The channel canvas write and edit path works from the bot token. Standalone canvases are blocked on a scope we do not have, so we are going with the channel canvas for the demo. That is done from my side.
+[1789189262000] Zaid: Which also settles the fallback question. Sharjeel, you own the fallback path, are you okay with going live?
+[1789189274000] Sharjeel: Yes. The recorded transcript is loaded as a fallback, but we should demo on live RTMS.
+[1789189286000] Zaid: Then I propose we decide it now: the demo runs on live RTMS, with the recorded transcript as the fallback if the stream drops.
+[1789189298000] Obaid: Agreed, that is the call. Live RTMS, recorded fallback ready. Nouman, you good?
+[1789189305000] Nouman: Yes, agreed.
+[1789189318000] Obaid: One thing I genuinely cannot decide is how we open the demo. Do we open on the Zoom meeting with the agent in the room, or open on the Slack canvas from the last sync and work backwards?
+[1789189334000] Zaid: Zoom first shows the live piece, but the canvas first tells the story.
+[1789189342000] Nouman: I lean canvas first.
+[1789189350000] Obaid: Let's take a quick poll on it: open on Zoom or open on the Slack canvas? We can keep going meanwhile.
+[1789189358000] Zaid: Fine, poll it.
+[1789189372000] Obaid: Next, rehearsal. I want a full dry run at four o'clock with the real Zoom meeting and the real Slack workspace. CL-A-03, the launch readiness review, has had no owner for three meetings. I will take it myself and run the dry run.
+[1789189392000] Sharjeel: Good, that unblocks it.
+[1789189402000] Obaid: New items. We need the fallback video recorded before four in case RTMS drops in the room. Zaid, can you do that?
+[1789189414000] Zaid: I will record it right after this call, so before four today.
+[1789189424000] Obaid: Someone also needs to write the submission post for the hackathon page. That has to go in by tonight.
+[1789189436000] Nouman: I can draft it tonight, after the demo.
+[1789189442000] Obaid: Okay, Nouman, submission post, tonight.
+[1789189456000] Sharjeel: The README also needs the run of show and the callback contract documented before the judges look at the repo. I am not sure who has time for that.
+[1789189472000] Obaid: Let's leave the owner open for now and come back to it. Priority is P1 though, it has to be there before judging.
+[1789189488000] Zaid: Status on my side: CL-A-08, the intervention cooldown and priority ordering, is done and merged this morning. So that one closes.
+[1789189504000] Nouman: CL-A-07, the side panel skeleton with the three buckets, is done too. And CL-A-04, I validated the Polly question types on Thursday: multiple choice and ranked both read back fine, open ended does not come back through the API.
+[1789189526000] Obaid: Good, closing A-07 and A-04. CL-A-09, the demo script and poll copy, is in the shared doc, so that is done as well.
+[1789189540000] Sharjeel: One more from me. The post-meeting survey closes thirty minutes after the meeting, and if nobody votes it just times out. For the demo I suggest we all vote within the first minute so the enrichment shows up on stage.
+[1789189558000] Obaid: Yes, everyone votes as soon as the survey lands. Let's make that the plan.
+[1789189564000] Zaid: Agreed.
+[1789189576000] Obaid: Launch comms. We have the submission post covered. There is also the social post. Should we post on LinkedIn or on X?
+[1789189588000] Nouman: LinkedIn reaches the people we want, X is faster.
+[1789189596000] Sharjeel: We could do both, but we only have time for one good one.
+[1789189604000] Zaid: I do not have a strong view.
+[1789189614000] Obaid: We are almost out of time, let's not decide that now. Last thing, the sync after the demo. Tuesday as usual?
+[1789189622000] Nouman: Tuesday works.
+[1789189630000] Obaid: Tuesday it is. One more action then: someone should pull the final poll results into the retro doc after the demo. No rush on that.
+[1789189642000] Zaid: I can do the retro doc, but not before Tuesday.
+[1789189652000] Obaid: Fine, Zaid, retro doc, and we will set the date on Tuesday. Thanks everyone, stopping the stream now.

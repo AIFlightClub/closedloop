@@ -486,8 +486,9 @@ export class SurveyRunner {
   }
 
   /** send + watch + summary (poll_round.json, summary.md). */
-  async run(request) {
+  async run(request, hooks = {}) {
     const sent = await this.send(request);
+    await hooks.onSent?.([sent]);
     const record = sent.status === "open" ? await this.watch(request, sent) : sent;
     const summary = this.store.writeSummary(request.meeting_id);
     this.log(`summary → ${summary.md} · poll round → ${summary.round}`);
