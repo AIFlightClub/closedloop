@@ -25,7 +25,9 @@ async function runCodex(prompt) {
   try {
     const args = ["exec", "--ignore-user-config", "--ephemeral", "--sandbox", "read-only", "--skip-git-repo-check", "-C", directory,
       "--output-schema", schemaPath, "--output-last-message", outputPath];
-    if (process.env.CODEX_MODEL) args.push("--model", process.env.CODEX_MODEL);
+    args.push("--model", process.env.CODEX_MODEL || "gpt-5.6-luna");
+    args.push("--config", `model_reasoning_effort=${JSON.stringify(process.env.CODEX_REASONING_EFFORT || "none")}`);
+    args.push("--config", "model_verbosity=\"low\"");
     args.push("-");
     await new Promise((resolvePromise, reject) => {
       const child = spawn(codexExecutable(), args, { stdio: ["pipe", "ignore", "pipe"] });

@@ -53,12 +53,15 @@ timestamp and speaker name. The generated files are ignored by Git.
 
 Sign in to Codex CLI with `codex login` using your ChatGPT account. The app
 automatically finds the Codex binary bundled with ChatGPT on macOS. On another
-setup, ensure `codex` is on PATH or set `CODEX_BIN` in `.env`. `CODEX_MODEL`
-is optional. Generation uses your Codex subscription limits and has a five-minute timeout.
+setup, ensure `codex` is on PATH or set `CODEX_BIN` in `.env`. Generation defaults
+to `gpt-5.6-luna` with reasoning disabled and low verbosity; `CODEX_MODEL` and
+`CODEX_REASONING_EFFORT` can override that. Generation uses your Codex subscription
+limits and has a five-minute safety timeout.
 
 `meeting-config.json` supplies the roster, ClosedLoop series, and timezone.
-At RTMS start, the app snapshots the committed demo notes plus completed notes
-from this series. On `meeting.rtms_stopped`, it finishes writing the transcript
+At RTMS start, the app snapshots the latest completed notes from this series, or
+the latest committed demo note when no generated meeting exists. On
+`meeting.rtms_stopped`, it finishes writing the transcript
 and supplies the entire `skills/meeting-loop-notes.md` to Codex.
 
 The canonical `meeting_id` is the RTMS stream ID, matching the JSON index key and
