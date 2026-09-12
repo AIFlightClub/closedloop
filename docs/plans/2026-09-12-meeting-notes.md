@@ -23,7 +23,7 @@
 
 Files: create `skills/meeting-loop-notes.md`, `meeting-config.example.json`; update `.env.example`, `.gitignore`.
 
-1. Copy the supplied skill verbatim into the repository so runtime does not depend on Downloads.
+1. The exact uploaded `1_Meeting Notes Generation Skill.md` is committed as `skills/meeting-loop-notes.md`. Runtime must read this entire file and supply it as the required instructions on every generation; do not substitute a summary or generic notes prompt. If the file cannot be read, fail generation explicitly. Use its Generate mode and pre-finalize checklist.
 2. Use the supplied roster configuration and document optional Codex executable/model overrides.
 3. Ignore generated notes and the file index; track the demo roster and seed notes explicitly.
 4. Validate roster before generating; record `needs_input` when missing. Treat transcript text as meeting data, not instructions.
