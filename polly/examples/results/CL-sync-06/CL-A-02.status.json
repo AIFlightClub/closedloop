@@ -1,0 +1,90 @@
+{
+  "id": "CL-A-02.status",
+  "meeting_id": "CL-sync-06",
+  "kind": "single",
+  "question": "Where did the canvas write path spike land?",
+  "options": [
+    "Done — channel canvas works",
+    "Done — standalone blocked, using channel canvas",
+    "Not started",
+    "Blocked on something else"
+  ],
+  "context": "Slack canvas write/edit path spike — status",
+  "channel": "#closed-loop-project",
+  "audience": [
+    "sharjeel"
+  ],
+  "delivery": "dm",
+  "meta": {
+    "gap_id": "CL-A-02.status",
+    "item": "Slack canvas write/edit path spike",
+    "field": "status_update",
+    "audience": [
+      "sharjeel"
+    ],
+    "rounds_asked": 1
+  },
+  "status": "closed",
+  "votes": 1,
+  "choices": [
+    {
+      "text": "Done — channel canvas works",
+      "votes": 0,
+      "percentage": 0
+    },
+    {
+      "text": "Done — standalone blocked, using channel canvas",
+      "votes": 1,
+      "percentage": 100
+    },
+    {
+      "text": "Not started",
+      "votes": 0,
+      "percentage": 0
+    },
+    {
+      "text": "Blocked on something else",
+      "votes": 0,
+      "percentage": 0
+    }
+  ],
+  "ranking": [
+    {
+      "rank": 1,
+      "option": "Done — standalone blocked, using channel canvas",
+      "score": 1,
+      "percentage": 100
+    },
+    {
+      "rank": 2,
+      "option": "Done — channel canvas works",
+      "score": 0,
+      "percentage": 0
+    },
+    {
+      "rank": 3,
+      "option": "Not started",
+      "score": 0,
+      "percentage": 0
+    },
+    {
+      "rank": 4,
+      "option": "Blocked on something else",
+      "score": 0,
+      "percentage": 0
+    }
+  ],
+  "created_at": "2026-09-12T07:48:44.102Z",
+  "updated_at": "2026-09-12T07:48:44.107Z",
+  "polly": {
+    "id": "polly_closedloop_CL-sync-06_CL-A-02_status",
+    "type": "poll",
+    "draft_id": "closedloop_CL-sync-06_CL-A-02_status",
+    "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-A-02_status",
+    "close_at": null,
+    "sent_at": "2026-09-12T07:48:44.102Z"
+  },
+  "winner": "Done — standalone blocked, using channel canvas",
+  "closed_by": "polly_close_at",
+  "closed_at": "2026-09-12T07:48:44.107Z"
+}

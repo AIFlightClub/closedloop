@@ -1,0 +1,90 @@
+{
+  "id": "CL-A-09.priority",
+  "meeting_id": "CL-sync-06",
+  "kind": "single",
+  "question": "What priority is the demo script and poll copy?",
+  "options": [
+    "P0 — blocks the demo",
+    "P1 — needed today",
+    "P2 — nice to have",
+    "Drop it"
+  ],
+  "context": "Demo script and poll question copy — priority",
+  "channel": "#closed-loop-project",
+  "audience": [
+    "obaid"
+  ],
+  "delivery": "dm",
+  "meta": {
+    "gap_id": "CL-A-09.priority",
+    "item": "Demo script and poll question copy",
+    "field": "priority",
+    "audience": [
+      "obaid"
+    ],
+    "rounds_asked": 0
+  },
+  "status": "closed",
+  "votes": 1,
+  "choices": [
+    {
+      "text": "P0 — blocks the demo",
+      "votes": 1,
+      "percentage": 100
+    },
+    {
+      "text": "P1 — needed today",
+      "votes": 0,
+      "percentage": 0
+    },
+    {
+      "text": "P2 — nice to have",
+      "votes": 0,
+      "percentage": 0
+    },
+    {
+      "text": "Drop it",
+      "votes": 0,
+      "percentage": 0
+    }
+  ],
+  "ranking": [
+    {
+      "rank": 1,
+      "option": "P0 — blocks the demo",
+      "score": 1,
+      "percentage": 100
+    },
+    {
+      "rank": 2,
+      "option": "P1 — needed today",
+      "score": 0,
+      "percentage": 0
+    },
+    {
+      "rank": 3,
+      "option": "P2 — nice to have",
+      "score": 0,
+      "percentage": 0
+    },
+    {
+      "rank": 4,
+      "option": "Drop it",
+      "score": 0,
+      "percentage": 0
+    }
+  ],
+  "created_at": "2026-09-12T07:48:44.101Z",
+  "updated_at": "2026-09-12T07:48:44.107Z",
+  "polly": {
+    "id": "polly_closedloop_CL-sync-06_CL-A-09_priority",
+    "type": "poll",
+    "draft_id": "closedloop_CL-sync-06_CL-A-09_priority",
+    "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-A-09_priority",
+    "close_at": null,
+    "sent_at": "2026-09-12T07:48:44.101Z"
+  },
+  "winner": "P0 — blocks the demo",
+  "closed_by": "polly_close_at",
+  "closed_at": "2026-09-12T07:48:44.107Z"
+}

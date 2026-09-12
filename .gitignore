@@ -505,3 +505,9 @@ dist
 .pnp.*
 # local ngrok config (contains authtoken)
 ngrok.yml
+
+# Polly module runtime state + secrets
+.polly-mcp-token.json
+polly/results/
+polly/inbox/*
+!polly/inbox/.gitkeep

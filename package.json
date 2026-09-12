@@ -1,15 +1,24 @@
 {
-  "name": "rtms-quickstart",
+  "name": "closedloop",
   "version": "1.0.1",
   "type": "module",
-  "description": "Get started with RTMS using Node.JS ",
+  "description": "ClosedLoop — Zoom RTMS transcripts + Polly MCP polls",
   "main": "index.js",
   "scripts": {
-    "start": "node --env-file=.env index.js"
+    "start": "node --env-file=.env index.js",
+    "polly": "node --env-file-if-exists=.env polly/src/cli.js",
+    "polly:auth": "node --env-file-if-exists=.env polly/src/cli.js auth",
+    "test:polly": "node --test \"polly/__tests__/*.test.js\""
   },
   "dependencies": {
-    "@zoom/rtms": "^1.1.0"
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@slack/web-api": "^8.1.1",
+    "@zoom/rtms": "^1.1.0",
+    "express": "^5.2.1",
+    "zod": "^4.6.2"
   },
-  "author": "Zoom Communications, Inc.",
-  "license": "MIT"
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  }
 }

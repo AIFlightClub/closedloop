@@ -1,0 +1,538 @@
+{
+  "meeting_id": "CL-sync-06",
+  "generated_at": "2026-09-12T07:48:44.108Z",
+  "polls": [
+    {
+      "id": "CL-A-07.priority",
+      "meeting_id": "CL-sync-06",
+      "kind": "single",
+      "question": "What priority is the Zoom side-panel skeleton?",
+      "options": [
+        "P0 — blocks the demo",
+        "P1 — needed today",
+        "P2 — nice to have",
+        "Drop it"
+      ],
+      "context": "Zoom side-panel skeleton — priority",
+      "channel": "#closed-loop-project",
+      "audience": [
+        "nouman"
+      ],
+      "delivery": "dm",
+      "meta": {
+        "gap_id": "CL-A-07.priority",
+        "item": "Zoom side-panel skeleton",
+        "field": "priority",
+        "audience": [
+          "nouman"
+        ],
+        "rounds_asked": 0
+      },
+      "status": "closed",
+      "votes": 1,
+      "choices": [
+        {
+          "text": "P0 — blocks the demo",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "P1 — needed today",
+          "votes": 1,
+          "percentage": 100
+        },
+        {
+          "text": "P2 — nice to have",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "Drop it",
+          "votes": 0,
+          "percentage": 0
+        }
+      ],
+      "ranking": [
+        {
+          "rank": 1,
+          "option": "P1 — needed today",
+          "score": 1,
+          "percentage": 100
+        },
+        {
+          "rank": 2,
+          "option": "P0 — blocks the demo",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 3,
+          "option": "P2 — nice to have",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 4,
+          "option": "Drop it",
+          "score": 0,
+          "percentage": 0
+        }
+      ],
+      "created_at": "2026-09-12T07:48:44.100Z",
+      "updated_at": "2026-09-12T07:48:44.105Z",
+      "polly": {
+        "id": "polly_closedloop_CL-sync-06_CL-A-07_priority",
+        "type": "poll",
+        "draft_id": "closedloop_CL-sync-06_CL-A-07_priority",
+        "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-A-07_priority",
+        "close_at": null,
+        "sent_at": "2026-09-12T07:48:44.101Z"
+      },
+      "winner": "P1 — needed today",
+      "closed_by": "polly_close_at",
+      "closed_at": "2026-09-12T07:48:44.105Z"
+    },
+    {
+      "id": "CL-Q-03.decision",
+      "meeting_id": "CL-sync-06",
+      "kind": "single",
+      "question": "Demo on live RTMS or the recorded fallback?",
+      "options": [
+        "Live RTMS — go for it",
+        "Recorded fallback — play it safe",
+        "Decide Saturday morning once entitlement is known"
+      ],
+      "channel": "#closed-loop-project",
+      "audience": [
+        "obaid",
+        "zaid",
+        "nouman",
+        "sharjeel"
+      ],
+      "delivery": "channel",
+      "meta": {
+        "gap_id": "CL-Q-03.decision",
+        "field": "decision",
+        "audience": [
+          "obaid",
+          "zaid",
+          "nouman",
+          "sharjeel"
+        ],
+        "rounds_asked": 0
+      },
+      "status": "closed",
+      "votes": 4,
+      "choices": [
+        {
+          "text": "Live RTMS — go for it",
+          "votes": 3,
+          "percentage": 75
+        },
+        {
+          "text": "Recorded fallback — play it safe",
+          "votes": 1,
+          "percentage": 25
+        },
+        {
+          "text": "Decide Saturday morning once entitlement is known",
+          "votes": 0,
+          "percentage": 0
+        }
+      ],
+      "ranking": [
+        {
+          "rank": 1,
+          "option": "Live RTMS — go for it",
+          "score": 3,
+          "percentage": 75
+        },
+        {
+          "rank": 2,
+          "option": "Recorded fallback — play it safe",
+          "score": 1,
+          "percentage": 25
+        },
+        {
+          "rank": 3,
+          "option": "Decide Saturday morning once entitlement is known",
+          "score": 0,
+          "percentage": 0
+        }
+      ],
+      "created_at": "2026-09-12T07:48:44.100Z",
+      "updated_at": "2026-09-12T07:48:44.104Z",
+      "polly": {
+        "id": "polly_closedloop_CL-sync-06_CL-Q-03_decision",
+        "type": "poll",
+        "draft_id": "closedloop_CL-sync-06_CL-Q-03_decision",
+        "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-Q-03_decision",
+        "close_at": null,
+        "sent_at": "2026-09-12T07:48:44.100Z"
+      },
+      "winner": "Live RTMS — go for it",
+      "closed_by": "polly_close_at",
+      "closed_at": "2026-09-12T07:48:44.104Z"
+    },
+    {
+      "id": "CL-A-08.due",
+      "meeting_id": "CL-sync-06",
+      "kind": "single",
+      "question": "When is the intervention cooldown logic due?",
+      "options": [
+        "Fri 11 Sep",
+        "Sat 12 Sep — before the demo",
+        "After the hackathon",
+        "No date needed"
+      ],
+      "context": "Intervention cooldown logic — due date",
+      "channel": "#closed-loop-project",
+      "audience": [
+        "zaid"
+      ],
+      "delivery": "dm",
+      "meta": {
+        "gap_id": "CL-A-08.due",
+        "item": "Intervention cooldown logic",
+        "field": "due_date",
+        "audience": [
+          "zaid"
+        ],
+        "rounds_asked": 0
+      },
+      "status": "closed",
+      "votes": 1,
+      "choices": [
+        {
+          "text": "Fri 11 Sep",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "Sat 12 Sep — before the demo",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "After the hackathon",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "No date needed",
+          "votes": 1,
+          "percentage": 100
+        }
+      ],
+      "ranking": [
+        {
+          "rank": 1,
+          "option": "No date needed",
+          "score": 1,
+          "percentage": 100
+        },
+        {
+          "rank": 2,
+          "option": "Fri 11 Sep",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 3,
+          "option": "Sat 12 Sep — before the demo",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 4,
+          "option": "After the hackathon",
+          "score": 0,
+          "percentage": 0
+        }
+      ],
+      "created_at": "2026-09-12T07:48:44.101Z",
+      "updated_at": "2026-09-12T07:48:44.106Z",
+      "polly": {
+        "id": "polly_closedloop_CL-sync-06_CL-A-08_due",
+        "type": "poll",
+        "draft_id": "closedloop_CL-sync-06_CL-A-08_due",
+        "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-A-08_due",
+        "close_at": null,
+        "sent_at": "2026-09-12T07:48:44.101Z"
+      },
+      "winner": "No date needed",
+      "closed_by": "polly_close_at",
+      "closed_at": "2026-09-12T07:48:44.106Z"
+    },
+    {
+      "id": "CL-A-08.priority",
+      "meeting_id": "CL-sync-06",
+      "kind": "single",
+      "question": "What priority is the intervention cooldown logic?",
+      "options": [
+        "P0 — blocks the demo",
+        "P1 — needed today",
+        "P2 — nice to have",
+        "Drop it"
+      ],
+      "context": "Intervention cooldown logic — priority",
+      "channel": "#closed-loop-project",
+      "audience": [
+        "zaid"
+      ],
+      "delivery": "dm",
+      "meta": {
+        "gap_id": "CL-A-08.priority",
+        "item": "Intervention cooldown logic",
+        "field": "priority",
+        "audience": [
+          "zaid"
+        ],
+        "rounds_asked": 0
+      },
+      "status": "closed",
+      "votes": 1,
+      "choices": [
+        {
+          "text": "P0 — blocks the demo",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "P1 — needed today",
+          "votes": 1,
+          "percentage": 100
+        },
+        {
+          "text": "P2 — nice to have",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "Drop it",
+          "votes": 0,
+          "percentage": 0
+        }
+      ],
+      "ranking": [
+        {
+          "rank": 1,
+          "option": "P1 — needed today",
+          "score": 1,
+          "percentage": 100
+        },
+        {
+          "rank": 2,
+          "option": "P0 — blocks the demo",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 3,
+          "option": "P2 — nice to have",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 4,
+          "option": "Drop it",
+          "score": 0,
+          "percentage": 0
+        }
+      ],
+      "created_at": "2026-09-12T07:48:44.101Z",
+      "updated_at": "2026-09-12T07:48:44.105Z",
+      "polly": {
+        "id": "polly_closedloop_CL-sync-06_CL-A-08_priority",
+        "type": "poll",
+        "draft_id": "closedloop_CL-sync-06_CL-A-08_priority",
+        "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-A-08_priority",
+        "close_at": null,
+        "sent_at": "2026-09-12T07:48:44.101Z"
+      },
+      "winner": "P1 — needed today",
+      "closed_by": "polly_close_at",
+      "closed_at": "2026-09-12T07:48:44.105Z"
+    },
+    {
+      "id": "CL-A-09.priority",
+      "meeting_id": "CL-sync-06",
+      "kind": "single",
+      "question": "What priority is the demo script and poll copy?",
+      "options": [
+        "P0 — blocks the demo",
+        "P1 — needed today",
+        "P2 — nice to have",
+        "Drop it"
+      ],
+      "context": "Demo script and poll question copy — priority",
+      "channel": "#closed-loop-project",
+      "audience": [
+        "obaid"
+      ],
+      "delivery": "dm",
+      "meta": {
+        "gap_id": "CL-A-09.priority",
+        "item": "Demo script and poll question copy",
+        "field": "priority",
+        "audience": [
+          "obaid"
+        ],
+        "rounds_asked": 0
+      },
+      "status": "closed",
+      "votes": 1,
+      "choices": [
+        {
+          "text": "P0 — blocks the demo",
+          "votes": 1,
+          "percentage": 100
+        },
+        {
+          "text": "P1 — needed today",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "P2 — nice to have",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "Drop it",
+          "votes": 0,
+          "percentage": 0
+        }
+      ],
+      "ranking": [
+        {
+          "rank": 1,
+          "option": "P0 — blocks the demo",
+          "score": 1,
+          "percentage": 100
+        },
+        {
+          "rank": 2,
+          "option": "P1 — needed today",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 3,
+          "option": "P2 — nice to have",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 4,
+          "option": "Drop it",
+          "score": 0,
+          "percentage": 0
+        }
+      ],
+      "created_at": "2026-09-12T07:48:44.101Z",
+      "updated_at": "2026-09-12T07:48:44.107Z",
+      "polly": {
+        "id": "polly_closedloop_CL-sync-06_CL-A-09_priority",
+        "type": "poll",
+        "draft_id": "closedloop_CL-sync-06_CL-A-09_priority",
+        "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-A-09_priority",
+        "close_at": null,
+        "sent_at": "2026-09-12T07:48:44.101Z"
+      },
+      "winner": "P0 — blocks the demo",
+      "closed_by": "polly_close_at",
+      "closed_at": "2026-09-12T07:48:44.107Z"
+    },
+    {
+      "id": "CL-A-02.status",
+      "meeting_id": "CL-sync-06",
+      "kind": "single",
+      "question": "Where did the canvas write path spike land?",
+      "options": [
+        "Done — channel canvas works",
+        "Done — standalone blocked, using channel canvas",
+        "Not started",
+        "Blocked on something else"
+      ],
+      "context": "Slack canvas write/edit path spike — status",
+      "channel": "#closed-loop-project",
+      "audience": [
+        "sharjeel"
+      ],
+      "delivery": "dm",
+      "meta": {
+        "gap_id": "CL-A-02.status",
+        "item": "Slack canvas write/edit path spike",
+        "field": "status_update",
+        "audience": [
+          "sharjeel"
+        ],
+        "rounds_asked": 1
+      },
+      "status": "closed",
+      "votes": 1,
+      "choices": [
+        {
+          "text": "Done — channel canvas works",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "Done — standalone blocked, using channel canvas",
+          "votes": 1,
+          "percentage": 100
+        },
+        {
+          "text": "Not started",
+          "votes": 0,
+          "percentage": 0
+        },
+        {
+          "text": "Blocked on something else",
+          "votes": 0,
+          "percentage": 0
+        }
+      ],
+      "ranking": [
+        {
+          "rank": 1,
+          "option": "Done — standalone blocked, using channel canvas",
+          "score": 1,
+          "percentage": 100
+        },
+        {
+          "rank": 2,
+          "option": "Done — channel canvas works",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 3,
+          "option": "Not started",
+          "score": 0,
+          "percentage": 0
+        },
+        {
+          "rank": 4,
+          "option": "Blocked on something else",
+          "score": 0,
+          "percentage": 0
+        }
+      ],
+      "created_at": "2026-09-12T07:48:44.102Z",
+      "updated_at": "2026-09-12T07:48:44.107Z",
+      "polly": {
+        "id": "polly_closedloop_CL-sync-06_CL-A-02_status",
+        "type": "poll",
+        "draft_id": "closedloop_CL-sync-06_CL-A-02_status",
+        "results_url": "https://app.polly.ai/results/closedloop_CL-sync-06_CL-A-02_status",
+        "close_at": null,
+        "sent_at": "2026-09-12T07:48:44.102Z"
+      },
+      "winner": "Done — standalone blocked, using channel canvas",
+      "closed_by": "polly_close_at",
+      "closed_at": "2026-09-12T07:48:44.107Z"
+    }
+  ]
+}
