@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 
@@ -21,6 +21,15 @@ const { createLiveDetector } = await import("../live.js");
 
 const sync06 = readFileSync(join(scratch, "demo/meetings/sync-06-2026-09-10.md"), "utf8");
 const loopState06 = JSON.parse(/```json\n([\s\S]*?)\n```/.exec(sync06)[1]);
+
+/** Stands in for startRecord (which now reads the project canvas from Slack). */
+async function fakeStart(id, transcriptPath) {
+  const config = JSON.parse(readFileSync(join(scratch, "meeting-config.json"), "utf8"));
+  const contextPath = join(scratch, "data/contexts", `${basename(transcriptPath, ".txt")}.json`);
+  mkdirSync(dirname(contextPath), { recursive: true });
+  writeFileSync(contextPath, JSON.stringify({ config, history: [] }));
+  return updateRecord(id, { meeting_id: id, streamId: id, seriesId: config.series_id, startedAt: new Date().toISOString(), transcriptPath, contextPath, status: "recording" });
+}
 
 /** Stands in for generate-notes.js: writes sync-06's notes + loop state for the meeting. */
 async function fakeNotes(id) {
@@ -77,7 +86,7 @@ test("demo run: transcript → notes → survey → results → enriched, one ca
     enriched.push(pollRound);
     return { notes: "# enriched", loopState: { meeting_id: id, gaps: [] }, stats: { respondents: pollRound.respondents, filled: 1, gaps_asked: pollRound.results.length }, version: 2, previous: {}, enrichedAt: "now" };
   };
-  const runner = createLoopRunner({ polly, notifier, log: () => {}, baseUrl: "http://localhost:8080", channel: "#closed-loop-project", options: { settleSeconds: 5, closeAt: "+10m" }, notes: fakeNotes, enrich });
+  const runner = createLoopRunner({ polly, notifier, log: () => {}, baseUrl: "http://localhost:8080", channel: "#closed-loop-project", options: { settleSeconds: 5, closeAt: "+10m" }, notes: fakeNotes, enrich, start: fakeStart });
   const detector = createLiveDetector({ meetingId: "demo-1", pollyMeetingId: "demo-1", channel: "#closed-loop-project", polly, extract: async () => ({ fire: true, reason: "asked", question: "Open on Zoom or on the canvas?", kind: "single", options: ["Zoom", "Canvas"], item: "Demo opening", field: "decision" }), notify: notifier.notify, sleep: async () => {}, options: { debounceMs: 0 } });
 
   const status = await runner.demo({ transcriptPath: "demo/transcripts/sync-07-2026-09-12.txt", meetingId: "demo-1", live: true, detector });
@@ -141,12 +150,12 @@ test("survey skipped and loop failures are reported", async () => {
     writeFileSync(loopStatePath, JSON.stringify({ meeting_id: id, attendance: {}, open_items: [], gaps: [] }));
     updateRecord(id, { status: "complete", notesPath, loopStatePath });
   };
-  const runner = createLoopRunner({ polly, notifier, log: () => {}, channel: "#c", notes: emptyNotes, enrich: async () => { throw new Error("should not enrich"); } });
+  const runner = createLoopRunner({ polly, notifier, log: () => {}, channel: "#c", notes: emptyNotes, enrich: async () => { throw new Error("should not enrich"); }, start: fakeStart });
   const status = await runner.demo({ transcriptPath: "demo/transcripts/sync-07-2026-09-12.txt", meetingId: "quiet" });
   assert.equal(status.stage, "done");
   assert.deepEqual(events, ["notes.ready", "survey.skipped"]);
   assert.equal(polly.runs.length, 0);
 
-  const failing = createLoopRunner({ polly, notifier, log: () => {}, channel: "#c", notes: async (id) => updateRecord(id, { status: "skipped", error: "Transcript has no utterances" }) });
+  const failing = createLoopRunner({ polly, notifier, log: () => {}, channel: "#c", notes: async (id) => updateRecord(id, { status: "skipped", error: "Transcript has no utterances" }), start: fakeStart });
   await assert.rejects(() => failing.demo({ transcriptPath: "demo/transcripts/sync-07-2026-09-12.txt", meetingId: "broken" }), /notes not generated \(skipped: Transcript has no utterances\)/);
 });

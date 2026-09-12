@@ -19,12 +19,28 @@ import { pollyMeetingKey } from "./survey-builder.js";
 const num = (value, fallback) => (value === undefined || value === "" || Number.isNaN(Number(value)) ? fallback : Number(value));
 const bool = (value, fallback) => (value === undefined || value === "" ? fallback : !/^(false|0|no|off)$/i.test(String(value)));
 
-export function createLoop({ polly, log, port, env = process.env } = {}) {
+export function createLoop({ polly, log, port, env = process.env, on = {} } = {}) {
   if (!polly) throw new Error("createLoop needs the Polly module (createPolly())");
   const logLine = log ?? ((line) => console.log(`[loop] ${line}`));
   const baseUrl = String(env.PUBLIC_BASE_URL || `http://localhost:${port ?? env.ZM_RTMS_PORT ?? 8080}`).replace(/\/$/, "");
   const channel = env.POLLY_CHANNEL || "#closed-loop-project";
-  const notifier = createNotifier({ url: env.LOOP_CALLBACK_URL || undefined, secret: env.LOOP_CALLBACK_SECRET || undefined, log: logLine });
+  const webhook = createNotifier({ url: env.LOOP_CALLBACK_URL || undefined, secret: env.LOOP_CALLBACK_SECRET || undefined, log: logLine });
+  // Every event goes to the webhook (if configured) and to the in-process
+  // handlers passed as `on: { "notes.ready": fn, … }` — how index.js writes the canvas.
+  const notifier = {
+    ...webhook,
+    async notify(event, payload) {
+      const outcome = await webhook.notify(event, payload);
+      for (const handler of [].concat(on[event] ?? [])) {
+        try {
+          await handler(payload);
+        } catch (error) {
+          logLine(`${payload.meeting_id ?? "-"}: ${event} handler failed — ${error.message}`);
+        }
+      }
+      return outcome;
+    },
+  };
   const runner = createLoopRunner({
     polly,
     notifier,

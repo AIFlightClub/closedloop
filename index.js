@@ -22,7 +22,32 @@ mkdirSync(transcriptsDirectory, { recursive: true });
 // enrichment or live polls.
 const port = Number(process.env.ZM_RTMS_PORT || 8080);
 const polly = process.env.POLLY_ENABLED !== "false" ? createPolly() : null;
-const loop = polly && process.env.LOOP_ENABLED !== "false" ? createLoop({ polly, port }) : null;
+
+// Append notes to the project Canvas (Slack lane). Failures are recorded on the
+// meeting, never fatal: the notes stay on disk and the loop carries on.
+const postNotesToCanvas = async (streamId, notes, label = "") => {
+  try {
+    await postMeetingNotes({ meeting_id: `${streamId}${label}`, notes });
+    updateRecord(streamId, { slackCanvasId: slackCanvasId(), slackCanvasPostedAt: new Date().toISOString(), slackCanvasError: null });
+    console.log(`Meeting notes posted to Slack Canvas: ${streamId}${label}`);
+  } catch (error) {
+    updateRecord(streamId, { slackCanvasError: error.message });
+    console.error(`Failed to post meeting ${streamId}${label} to Slack Canvas:`, error.message);
+  }
+};
+
+// The canvas gets the notes as soon as they exist, and the enriched version once
+// the survey has been read back — for Zoom meetings and transcript demos alike.
+const loop = polly && process.env.LOOP_ENABLED !== "false"
+  ? createLoop({
+      polly,
+      port,
+      on: {
+        "notes.ready": (event) => postNotesToCanvas(event.meeting_id, event.notes_markdown),
+        "notes.enriched": (event) => postNotesToCanvas(event.meeting_id, event.notes_markdown, ` (enriched: ${event.enrichment.filled}/${event.enrichment.gaps_asked} gaps filled from the poll)`),
+      },
+    })
+  : null;
 
 const createTranscriptPath = (streamId) => {
   const startedAt = new Date().toISOString().replace(/[:.]/g, "-");
@@ -93,24 +118,10 @@ const handleZoomWebhook = async ({ event, payload }, req, res) => {
         console.error(`Meeting ${streamId} failed:`, error.message);
         return;
       }
-      // Notes are in: survey → results → enriched notes, with a callback after each stage.
+      // Notes are in. With the loop on, its notes.ready handler writes the canvas now,
+      // then survey → results → enrichment, and notes.enriched writes the canvas again.
       if (loop) await loop.afterNotes(streamId).catch((error) => console.error(`Loop for ${streamId} failed:`, error.message));
-      const completed = records()[streamId];
-      if (completed?.status === "complete" && !completed.slackCanvasPostedAt) {
-        try {
-          await postMeetingNotes(getMeetingNotes(streamId));
-          updateRecord(streamId, {
-            slackCanvasId: slackCanvasId(),
-            slackCanvasPostedAt: new Date().toISOString(),
-            slackCanvasError: null,
-          });
-          console.log(`Meeting notes posted to Slack Canvas: ${streamId}`);
-        } catch (error) {
-          // Notes remain available on disk; Canvas delivery can be retried.
-          updateRecord(streamId, { slackCanvasError: error.message });
-          console.error(`Failed to post meeting ${streamId} to Slack Canvas:`, error.message);
-        }
-      }
+      else await postNotesToCanvas(streamId, getMeetingNotes(streamId).notes);
     })();
 
     return;
