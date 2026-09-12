@@ -26,6 +26,8 @@ lib/linux-x64/*
 !index.js
 !meeting-records.js
 !generate-notes.js
+# the Polly module is plain JavaScript
+!polly/**/*.js
 *.c
 *.py
 *.pyi
