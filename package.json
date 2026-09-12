@@ -6,6 +6,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node --env-file=.env index.js",
+    "notes:retry": "node --env-file=.env generate-notes.js",
+    "notes:get": "node meeting-records.js",
     "polly": "node --env-file-if-exists=.env polly/src/cli.js",
     "polly:auth": "node --env-file-if-exists=.env polly/src/cli.js auth",
     "test:polly": "node --test \"polly/__tests__/*.test.js\""

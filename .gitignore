@@ -24,6 +24,8 @@ lib/linux-x64/*
 # only allow files where we want them
 *.js
 !index.js
+!meeting-records.js
+!generate-notes.js
 # the Polly module is plain JavaScript
 !polly/**/*.js
 *.c
@@ -507,6 +509,9 @@ dist
 .pnp.*
 # local ngrok config (contains authtoken)
 ngrok.yml
+# Generated meeting artifacts
+/data/
+/notes/
 
 # Polly module runtime state + secrets
 .polly-mcp-token.json
