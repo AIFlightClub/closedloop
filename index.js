@@ -9,6 +9,7 @@ import { createPolly } from "./polly/index.js";
 import { createLoop } from "./loop/index.js";
 import { records, startRecord, updateRecord } from "./meeting-records.js";
 import { generateNotes } from "./generate-notes.js";
+import { verifySlackRequest } from "./slack/webhook.js";
 
 const clients = new Map();
 const transcriptsDirectory = join(process.cwd(), "transcripts");
@@ -151,6 +152,17 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
 const app = express();
 const zoomPath = process.env.ZM_RTMS_PATH || "/";
 app.post(zoomPath, rtms.createWebhookHandler(handleZoomWebhook, zoomPath));
+
+// Keep Slack's raw payload intact until its signature has been checked.
+app.post("/event_subscriptions", express.raw({ type: "application/json" }), (req, res) => {
+  if (!verifySlackRequest(req)) return res.sendStatus(401);
+
+  const body = JSON.parse(req.body.toString());
+  if (body.type === "url_verification") return res.status(200).type("text/plain").send(body.challenge);
+
+  res.sendStatus(200); // Acknowledge Slack before processing an event.
+  console.log("Slack event:", body.type, body.event?.type);
+});
 
 if (polly) {
   app.use("/polls", polly.router);

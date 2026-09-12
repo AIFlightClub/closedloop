@@ -1,0 +1,69 @@
+display_information:
+  name: Closed-Loop
+
+features:
+  app_home:
+    home_tab_enabled: true
+    messages_tab_enabled: false
+    messages_tab_read_only_enabled: true
+
+  bot_user:
+    display_name: closedloop
+    always_online: false
+
+oauth_config:
+  redirect_urls:
+    - https://localhost:8080/slack/oauth/callback
+    - https://closedloop.shares.zrok.io/slack/oauth/callback
+
+  scopes:
+    bot:
+      # Canvas
+      - canvases:read
+      - canvases:write
+      - files:read # Needed only if you need to locate/list Canvas files
+
+      # Public-channel access and messages
+      - channels:read
+      - channels:history
+      - channels:join
+      - chat:write
+      # - chat:write.public # Add only if the bot must post to public channels without joining
+
+      # Private channels: the bot must be invited to each channel
+      - groups:read
+      - groups:history
+
+      # DMs and group DMs with the bot
+      - im:history
+      - im:read
+      - mpim:history
+      - mpim:read
+
+      # Bot interactions
+      - app_mentions:read
+
+      # Keep only if this app is also being exposed as Slack's MCP server
+      - mcp:connect
+
+    bot_optional:
+      - mcp:connect
+
+settings:
+  event_subscriptions:
+    request_url: https://closedloop.shares.zrok.io/event_subscriptions
+    bot_events:
+      - app_mention
+      - app_uninstalled
+      - message.channels
+      - message.groups
+      - message.im
+      - message.mpim
+
+  interactivity:
+    is_enabled: true
+    request_url: https://closedloop.shares.zrok.io/interactive_components
+
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
