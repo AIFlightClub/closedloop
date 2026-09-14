@@ -1,6 +1,7 @@
-import { mkdirSync, readFileSync, writeFileSync, renameSync, existsSync, readdirSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync, renameSync, existsSync } from "node:fs";
 import { resolve, dirname, basename } from "node:path";
 import { pathToFileURL } from "node:url";
+import { readProjectCanvas, slackCanvasId } from "./slack/project-canvas.js";
 
 export const root = process.cwd();
 const indexPath = resolve(root, "data/meetings.json");
@@ -31,20 +32,10 @@ export function updateRecord(id, patch) {
   return all[id];
 }
 
-export function startRecord(id, transcriptPath, meetingId) {
+export async function startRecord(id, transcriptPath, meetingId) {
   const config = readJson(resolve(root, "meeting-config.json"));
   const startedAt = new Date().toISOString();
-  const seedDirectory = resolve(root, config.seed_notes_directory);
-  const seedHistory = readdirSync(seedDirectory).filter(f => f.endsWith(".md")).sort().map(file => {
-    const path = resolve(seedDirectory, file);
-    return { path, notes: readFileSync(path, "utf8") };
-  });
-  const previous = Object.values(records()).filter(r => r.seriesId === config.series_id && r.status === "complete" && r.startedAt < startedAt)
-    .sort((a, b) => a.startedAt.localeCompare(b.startedAt));
-  const predecessor = previous.at(-1);
-  const history = predecessor
-    ? [{ path: predecessor.notesPath, notes: readFileSync(predecessor.notesPath, "utf8"), loopState: readJson(predecessor.loopStatePath) }]
-    : seedHistory.slice(-1);
+  const history = [{ path: `slack://canvas/${slackCanvasId()}`, notes: await readProjectCanvas() }];
   const contextPath = resolve(root, "data/contexts", `${basename(transcriptPath, ".txt")}.json`);
   saveJson(contextPath, { config, history });
   return updateRecord(id, { meeting_id: id, streamId: id, zoomMeetingId: meetingId ?? null, seriesId: config.series_id, startedAt,

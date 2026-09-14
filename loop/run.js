@@ -22,7 +22,7 @@ export function parseTranscriptLine(line) {
   return { ts: match[1], speaker: match[2].trim(), text: match[3].trim() };
 }
 
-export function createLoopRunner({ polly, notifier, log = () => {}, baseUrl = "", channel, options = {}, notes = generateNotes, enrich = enrichNotes, liveFactory }) {
+export function createLoopRunner({ polly, notifier, log = () => {}, baseUrl = "", channel, options = {}, notes = generateNotes, enrich = enrichNotes, start = startRecord, liveFactory }) {
   const settings = {
     surveyBuilder: options.surveyBuilder ?? "local",
     closeAt: options.closeAt ?? "+30m",
@@ -306,7 +306,7 @@ export function createLoopRunner({ polly, notifier, log = () => {}, baseUrl = ""
     mkdirSync(transcriptsDir, { recursive: true });
     const dest = join(transcriptsDir, `${stamp}-${String(id).replace(/[^a-zA-Z0-9_-]/g, "_")}.txt`);
     copyFileSync(source, dest);
-    startRecord(id, dest, null);
+    await start(id, dest, null);
     updateRecord(id, { demo: { source }, loop: { stage: "recording", demo: true } });
     log(`${id}: demo meeting registered from ${transcriptPath}`);
     let livePolls = [];

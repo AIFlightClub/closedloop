@@ -32,6 +32,8 @@ lib/linux-x64/*
 !polly/**/*.js
 # the loop module (notes → survey → enriched notes) is plain JavaScript
 !loop/**/*.js
+# Slack integration modules are plain JavaScript too.
+!slack/**/*.js
 *.c
 *.py
 *.pyi

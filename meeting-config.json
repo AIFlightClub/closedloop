@@ -2,6 +2,5 @@
   "series_id": "CL",
   "title": "ClosedLoop Sync",
   "timezone": "Asia/Karachi",
-  "required_attendees": ["Zaid", "Sharjeel", "Obaid", "Nouman"],
-  "seed_notes_directory": "demo/meetings"
+  "required_attendees": ["Zaid", "Sharjeel", "Obaid", "Nouman"]
 }
