@@ -1,0 +1,60 @@
+{
+  "meeting": {
+    "id": "REPLACE_WITH_ZOOM_MEETING_UUID",
+    "title": "ClosedLoop Sync",
+    "startedAt": "2026-09-12T09:00:00Z",
+    "scheduledEndAt": "2026-09-12T09:30:00Z",
+    "timezone": "Asia/Karachi"
+  },
+  "contextSource": "Project fixture",
+  "required": [
+    {
+      "id": "obaid",
+      "name": "Obaid",
+      "zoomUserId": "REPLACE_WITH_OBAID_ZOOM_USER_ID"
+    },
+    {
+      "id": "zaid",
+      "name": "Zaid",
+      "zoomUserId": "REPLACE_WITH_ZAID_ZOOM_USER_ID"
+    },
+    {
+      "id": "nouman",
+      "name": "Nouman",
+      "zoomUserId": "REPLACE_WITH_NOUMAN_ZOOM_USER_ID"
+    },
+    {
+      "id": "sharjeel",
+      "name": "Sharjeel",
+      "zoomUserId": "REPLACE_WITH_SHARJEEL_ZOOM_USER_ID"
+    }
+  ],
+  "identities": [],
+  "agenda": [
+    {
+      "id": "rtms",
+      "label": "RTMS entitlement",
+      "keywords": ["rtms", "entitlement"]
+    },
+    {
+      "id": "canvas",
+      "label": "Canvas write path",
+      "keywords": ["canvas", "write path"]
+    },
+    {
+      "id": "fallback",
+      "label": "Live RTMS or recorded fallback",
+      "keywords": ["recorded fallback", "live demo"]
+    },
+    {
+      "id": "rehearsal",
+      "label": "Demo rehearsal",
+      "keywords": ["rehearsal", "run of show"]
+    },
+    {
+      "id": "launch",
+      "label": "Launch communications",
+      "keywords": ["launch communications", "submission post"]
+    }
+  ]
+}

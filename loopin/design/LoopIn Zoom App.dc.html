@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" />
+<style>
+  body { margin: 0; background: #0e0e11; }
+  a { color: #0b5cff; text-decoration: none; }
+  a:hover { color: #0747cc; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes ringClose { from { stroke-dashoffset: 76; } to { stroke-dashoffset: 0; } }
+  @keyframes checkPop { 0% { opacity: 0; transform: scale(.5); } 60% { opacity: 1; transform: scale(1.15); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes closedGlow { 0% { box-shadow: 0 0 0 0 rgba(6,118,71,.28); } 100% { box-shadow: 0 0 0 14px rgba(6,118,71,0); } }
+  @keyframes listen { 0%,100% { opacity: .35; transform: scaleY(.5); } 50% { opacity: 1; transform: scaleY(1); } }
+  @keyframes recPulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  @keyframes slideInRight { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<div style="font-family: 'Open Sans', system-ui, sans-serif; padding: 28px; display: flex; flex-direction: column; gap: 16px; align-items: center; width: 1900px;">
+
+  <div style="display: flex; gap: 20px; align-items: flex-start;">
+
+    <!-- ORGANIZER ZOOM WINDOW -->
+    <div style="width: 1150px; height: 762px; background: #16161a; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 60px rgba(0,0,0,.5); border: 1px solid #2a2a31;">
+      <div style="height: 44px; flex: 0 0 44px; background: #1d1d22; border-bottom: 1px solid #2a2a31; display: flex; align-items: center; padding: 0 14px; gap: 12px;">
+        <div style="display: flex; gap: 7px;">
+          <div style="width: 11px; height: 11px; border-radius: 50%; background: #3a3a42;"></div>
+          <div style="width: 11px; height: 11px; border-radius: 50%; background: #3a3a42;"></div>
+          <div style="width: 11px; height: 11px; border-radius: 50%; background: #3a3a42;"></div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-left: 6px;">
+          <span style="color: #f2f2f5; font-size: 13px; font-weight: 600;">Events Project Sync</span>
+          <span style="color: #8a8c95; font-size: 12px;">{{ elapsed }} elapsed</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-left: 4px; padding: 3px 8px; border-radius: 5px; background: #2a2a31;">
+          <span style="width: 7px; height: 7px; border-radius: 50%; background: #e0483d; animation: recPulse 2s infinite;"></span>
+          <span style="color: #b9bbc4; font-size: 11px; font-weight: 600;">Rec</span>
+        </div>
+        <div style="flex: 1;"></div>
+        <span style="color: #8a8c95; font-size: 12px;">Organizer view — Omar Shah</span>
+      </div>
+
+      <div style="flex: 1; display: flex; min-height: 0;">
+        <div style="flex: 1; display: flex; flex-direction: column; min-width: 0; padding: 14px; gap: 12px;">
+          <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; min-height: 0;">
+            <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="4">
+              <div style="position: relative; border-radius: 10px; background: #232329; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid {{ t.ring }};">
+                <div style="width: 74px; height: 74px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; font-weight: 600; letter-spacing: .5px; background: {{ t.c }};">{{ t.i }}</div>
+                <div style="position: absolute; left: 10px; bottom: 10px; display: flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 6px; background: rgba(12,12,14,.72);">
+                  <span style="color: #f2f2f5; font-size: 12px; font-weight: 600;">{{ t.n }}</span>
+                  <span style="color: #7ecfa0; font-size: 11px;">{{ t.badge }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="flex: 0 0 auto; display: flex; justify-content: center;">
+            <div style="max-width: 640px; padding: 9px 14px; border-radius: 8px; background: rgba(12,12,14,.82); border: 1px solid #2a2a31; color: #e7e8ee; font-size: 13px; line-height: 1.45; text-align: center; text-wrap: pretty;">{{ caption }}</div>
+          </div>
+        </div>
+
+        <!-- LOOPIN SIDE PANEL -->
+        <div style="width: 372px; flex: 0 0 372px; background: #fff; display: flex; flex-direction: column; border-left: 1px solid #2a2a31;">
+          <div style="flex: 0 0 auto; padding: 12px 14px 0 14px; border-bottom: 1px solid #e9eaee;">
+            <div style="display: flex; align-items: center; gap: 9px;">
+              <svg width="22" height="22" viewBox="0 0 22 22" style="flex: 0 0 auto;"><circle cx="11" cy="11" r="8" fill="none" stroke="#0b5cff" stroke-width="3" stroke-linecap="round" stroke-dasharray="44 6" transform="rotate(-90 11 11)"></circle></svg>
+              <span style="font-size: 14px; font-weight: 700; color: #16161a; letter-spacing: -.1px;">LoopIn</span>
+              <div style="flex: 1;"></div>
+              <span style="color: #9a9ca4; font-size: 13px;">⤢</span>
+              <span style="color: #9a9ca4; font-size: 13px;">⧉</span>
+              <span style="color: #9a9ca4; font-size: 13px;">✕</span>
+            </div>
+            <div style="display: flex; gap: 18px; margin-top: 12px;">
+              <div onClick="{{ showNow }}" style="padding-bottom: 9px; font-size: 12.5px; font-weight: 600; cursor: pointer; color: {{ nowColor }}; border-bottom: 2px solid {{ nowBorder }};">Now</div>
+              <div onClick="{{ showOutcomes }}" style="padding-bottom: 9px; font-size: 12.5px; font-weight: 600; cursor: pointer; color: {{ outColor }}; border-bottom: 2px solid {{ outBorder }};">Outcomes</div>
+            </div>
+          </div>
+
+          <div style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+            <sc-if value="{{ tabNow }}" hint-placeholder-val="{{ true }}">
+              <div style="flex: 1; overflow: auto; padding: 14px;">
+                <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px;">
+                  <div>
+                    <div style="font-size: 14px; font-weight: 700; color: #16161a;">Events Project Sync</div>
+                    <div style="font-size: 12px; color: #6b6d76; margin-top: 2px;">{{ elapsed }} elapsed · {{ remaining }} left</div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 12px; padding: 10px 12px; border-radius: 8px; display: flex; align-items: center; gap: 9px; background: {{ healthBg }}; border: 1px solid {{ healthBorder }};">
+                  <span style="width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; background: {{ healthDot }};"></span>
+                  <span style="font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; color: #6b6d76;">Meeting health</span>
+                  <div style="flex: 1;"></div>
+                  <span style="font-size: 12.5px; font-weight: 700; color: {{ healthText }};">{{ healthLabel }}</span>
+                </div>
+
+                <!-- INTERVENTION: OWNER MISSING -->
+                <sc-if value="{{ cardOwner }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #f0ddbc; border-radius: 10px; background: #fffbf4; overflow: hidden; animation: cardIn .28s ease both;">
+                    <div style="padding: 10px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #f4e7cf;">
+                      <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-dasharray="26 9" transform="rotate(-90 7 7)"></circle></svg>
+                      <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #b45309;">Open loop</span>
+                      <div style="flex: 1;"></div>
+                      <span style="font-size: 11px; color: #8a6a45;">just now</span>
+                    </div>
+                    <div style="padding: 12px;">
+                      <div style="font-size: 13.5px; font-weight: 700; color: #16161a;">Owner missing</div>
+                      <div style="margin-top: 8px; padding: 9px 11px; border-left: 2px solid #e2c894; background: #fff; border-radius: 0 6px 6px 0; font-size: 13px; line-height: 1.5; color: #2b2b30; text-wrap: pretty;">“Update the final Slack message to include priority ranking.”</div>
+                      <div style="margin-top: 9px; font-size: 12.5px; line-height: 1.5; color: #6b6d76;">I heard an action item, but I didn't hear an owner.</div>
+
+                      <sc-if value="{{ assignMode }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top: 12px; animation: fadeIn .2s ease both;">
+                          <div style="font-size: 11.5px; font-weight: 700; color: #6b6d76; text-transform: uppercase; letter-spacing: .6px;">Assign to</div>
+                          <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                            <sc-for list="{{ people3 }}" as="p" hint-placeholder-count="3">
+                              <div onClick="{{ p.assign }}" style="display: flex; align-items: center; gap: 9px; padding: 7px 9px; border: 1px solid #e3e5ea; border-radius: 7px; background: #fff; cursor: pointer;" style-hover="border-color: #0b5cff; background: #f5f8ff;">
+                                <div style="width: 24px; height: 24px; border-radius: 50%; color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; background: {{ p.c }};">{{ p.i }}</div>
+                                <span style="font-size: 12.5px; font-weight: 600; color: #16161a;">{{ p.n }}</span>
+                              </div>
+                            </sc-for>
+                          </div>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ ownerActions }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top: 13px; display: flex; flex-direction: column; gap: 7px;">
+                          <div onClick="{{ askRoom }}" style="padding: 9px 12px; border-radius: 7px; background: #0b5cff; color: #fff; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #0747cc;">Ask the room</div>
+                          <div style="display: flex; gap: 7px;">
+                            <div onClick="{{ assignOwner }}" style="flex: 1; padding: 8px 10px; border-radius: 7px; border: 1px solid #d5d8de; background: #fff; color: #2b2b30; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Assign owner</div>
+                            <div onClick="{{ ignore }}" style="flex: 1; padding: 8px 10px; border-radius: 7px; border: 1px solid transparent; background: transparent; color: #6b6d76; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Ignore</div>
+                          </div>
+                        </div>
+                      </sc-if>
+                      <div style="margin-top: 10px; font-size: 11.5px; color: #a08050;">Suggested intervention</div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- ASK THE ROOM COMPOSER -->
+                <sc-if value="{{ cardAsk }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #dbe3f5; border-radius: 10px; background: #fff; overflow: hidden; animation: cardIn .28s ease both;">
+                    <div style="padding: 10px 12px; border-bottom: 1px solid #eceef3; display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #0b5cff;">Ask participants</span>
+                    </div>
+                    <div style="padding: 12px;">
+                      <div style="padding: 10px 11px; background: #f5f8ff; border-radius: 7px; font-size: 13px; line-height: 1.5; color: #16161a; text-wrap: pretty;">“Who should own updating the final Slack message with priority rankings?”</div>
+                      <div style="margin-top: 13px; font-size: 11.5px; font-weight: 700; color: #6b6d76; text-transform: uppercase; letter-spacing: .6px;">Audience</div>
+                      <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 7px;">
+                        <div onClick="{{ setEveryone }}" style="display: flex; align-items: center; gap: 9px; cursor: pointer;">
+                          <span style="width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid {{ evBorder }}; display: flex; align-items: center; justify-content: center;"><span style="width: 6px; height: 6px; border-radius: 50%; background: {{ evDot }};"></span></span>
+                          <span style="font-size: 12.5px; color: #2b2b30;">Everyone</span>
+                        </div>
+                        <div onClick="{{ setSelect }}" style="display: flex; align-items: center; gap: 9px; cursor: pointer;">
+                          <span style="width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid {{ selBorder }}; display: flex; align-items: center; justify-content: center;"><span style="width: 6px; height: 6px; border-radius: 50%; background: {{ selDot }};"></span></span>
+                          <span style="font-size: 12.5px; color: #2b2b30;">Select participants</span>
+                        </div>
+                      </div>
+                      <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 6px; padding: 8px; border: 1px solid #eceef3; border-radius: 8px;">
+                        <sc-for list="{{ askList }}" as="p" hint-placeholder-count="4">
+                          <div onClick="{{ p.toggle }}" style="display: flex; align-items: center; gap: 9px; padding: 4px 3px; cursor: {{ p.cursor }}; opacity: {{ p.opacity }};">
+                            <span style="width: 15px; height: 15px; border-radius: 4px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; background: {{ p.boxBg }}; border: 1.5px solid {{ p.boxBorder }};">{{ p.check }}</span>
+                            <div style="width: 22px; height: 22px; border-radius: 50%; color: #fff; font-size: 9.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; background: {{ p.c }};">{{ p.i }}</div>
+                            <span style="font-size: 12.5px; font-weight: 600; color: #16161a;">{{ p.n }}</span>
+                            <span style="font-size: 11.5px; color: #9a9ca4;">{{ p.note }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <div onClick="{{ toggleAlsoAsk }}" style="margin-top: 11px; display: flex; align-items: flex-start; gap: 9px; cursor: pointer;">
+                        <span style="width: 15px; height: 15px; border-radius: 4px; margin-top: 1px; flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; background: {{ alsoBg }}; border: 1.5px solid {{ alsoBorder }};">{{ alsoCheck }}</span>
+                        <span style="font-size: 12px; line-height: 1.4; color: #6b6d76;">Also ask absent required participants after the meeting</span>
+                      </div>
+                      <div style="margin-top: 13px; display: flex; gap: 7px;">
+                        <div onClick="{{ send }}" style="flex: 1; padding: 9px 12px; border-radius: 7px; background: #0b5cff; color: #fff; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #0747cc;">Send</div>
+                        <div onClick="{{ cancel }}" style="flex: 1; padding: 9px 12px; border-radius: 7px; border: 1px solid #d5d8de; background: #fff; color: #2b2b30; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Cancel</div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- AWAITING RESPONSES -->
+                <sc-if value="{{ cardAwaiting }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #dbe3f5; border-radius: 10px; background: #fff; overflow: hidden; animation: cardIn .28s ease both;">
+                    <div style="padding: 10px 12px; border-bottom: 1px solid #eceef3; display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #0b5cff;">Asked the room</span>
+                      <div style="flex: 1;"></div>
+                      <span style="font-size: 11px; color: #6b6d76;">{{ responded }} of 3 responded</span>
+                    </div>
+                    <div style="padding: 12px;">
+                      <div style="font-size: 13px; line-height: 1.5; color: #16161a; text-wrap: pretty;">“Who should own updating the final Slack message with priority rankings?”</div>
+                      <div style="margin-top: 11px; height: 4px; border-radius: 99px; background: #eceef3; overflow: hidden;">
+                        <div style="height: 100%; border-radius: 99px; background: #0b5cff; transition: width .5s ease; width: {{ respPct }}%;"></div>
+                      </div>
+                      <div style="margin-top: 11px; font-size: 12.5px; color: #6b6d76;">{{ awaitNote }}</div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- LOOP CLOSED -->
+                <sc-if value="{{ cardClosed }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #c9e9d5; border-radius: 10px; background: #f4fdf7; overflow: hidden; animation: cardIn .3s ease both, closedGlow .9s ease .1s both;">
+                    <div style="padding: 12px; display: flex; gap: 11px; align-items: flex-start;">
+                      <div style="position: relative; width: 28px; height: 28px; flex: 0 0 auto;">
+                        <svg width="28" height="28" viewBox="0 0 28 28"><circle cx="14" cy="14" r="12" fill="none" stroke="#067647" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="76" style="animation: ringClose .7s cubic-bezier(.4,0,.2,1) both;" transform="rotate(-90 14 14)"></circle></svg>
+                        <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #067647; font-size: 13px; font-weight: 700; animation: checkPop .35s ease .6s both;">✓</span>
+                      </div>
+                      <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #067647;">Loop closed</div>
+                        <div style="margin-top: 5px; font-size: 13.5px; font-weight: 700; color: #16161a; line-height: 1.4; text-wrap: pretty;">{{ closedTitle }}</div>
+                        <div style="margin-top: 8px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                          <span style="font-size: 12.5px; color: #2b2b30;">{{ closedMeta }}</span>
+                        </div>
+                        <div style="margin-top: 4px; font-size: 11.5px; color: #6b6d76;">{{ closedConfirm }}</div>
+                        <div onClick="{{ next }}" style="margin-top: 11px; padding: 8px 12px; border-radius: 7px; border: 1px solid #c9e9d5; background: #fff; color: #067647; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #eefaf2;">Continue</div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- ATTENTION: AGENDA ITEM -->
+                <sc-if value="{{ cardAgenda }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #f3cfcb; border-radius: 10px; background: #fffaf9; overflow: hidden; animation: cardIn .28s ease both;">
+                    <div style="padding: 10px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #f7dfdc;">
+                      <span style="width: 8px; height: 8px; border-radius: 2px; background: #b42318;"></span>
+                      <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #b42318;">Attention</span>
+                      <div style="flex: 1;"></div>
+                      <span style="font-size: 11px; font-weight: 700; color: #b42318;">8 minutes remaining</span>
+                    </div>
+                    <div style="padding: 12px;">
+                      <div style="font-size: 13.5px; line-height: 1.5; color: #16161a; text-wrap: pretty;">“Absent stakeholder behavior” hasn't been discussed yet.</div>
+                      <div style="margin-top: 10px; font-size: 11.5px; font-weight: 700; color: #6b6d76; text-transform: uppercase; letter-spacing: .6px;">Suggested next step</div>
+                      <div style="margin-top: 4px; font-size: 12.5px; color: #2b2b30;">Move to this agenda item now.</div>
+                      <div style="margin-top: 13px; display: flex; flex-direction: column; gap: 7px;">
+                        <div onClick="{{ nudge }}" style="padding: 9px 12px; border-radius: 7px; background: #0b5cff; color: #fff; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #0747cc;">Nudge meeting</div>
+                        <div style="display: flex; gap: 7px;">
+                          <div onClick="{{ followUp }}" style="flex: 1; padding: 8px 10px; border-radius: 7px; border: 1px solid #d5d8de; background: #fff; color: #2b2b30; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Move to follow-up</div>
+                          <div onClick="{{ ignore }}" style="flex: 1; padding: 8px 10px; border-radius: 7px; background: transparent; color: #6b6d76; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Ignore</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- NUDGE SENT -->
+                <sc-if value="{{ cardNudged }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #dbe3f5; border-radius: 10px; background: #fff; padding: 12px; animation: cardIn .28s ease both;">
+                    <div style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #0b5cff;">Nudge sent</div>
+                    <div style="margin-top: 7px; font-size: 12.5px; line-height: 1.5; color: #2b2b30;">All participants saw a quiet banner. Agenda item is now live.</div>
+                    <div onClick="{{ next }}" style="margin-top: 11px; padding: 8px 12px; border-radius: 7px; border: 1px solid #d5d8de; background: #fff; color: #2b2b30; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Continue</div>
+                  </div>
+                </sc-if>
+
+                <!-- DECISION OPEN -->
+                <sc-if value="{{ cardDecision }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #f0ddbc; border-radius: 10px; background: #fffbf4; overflow: hidden; animation: cardIn .28s ease both;">
+                    <div style="padding: 10px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #f4e7cf;">
+                      <svg width="14" height="14" viewBox="0 0 14 14"><circle cx="7" cy="7" r="5.5" fill="none" stroke="#b45309" stroke-width="2" stroke-linecap="round" stroke-dasharray="26 9" transform="rotate(-90 7 7)"></circle></svg>
+                      <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #b45309;">Decision open</span>
+                    </div>
+                    <div style="padding: 12px;">
+                      <div style="font-size: 12.5px; color: #6b6d76;">The team discussed two options:</div>
+                      <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #fff; border: 1px solid #f0e2c8; border-radius: 7px;">
+                          <span style="width: 5px; height: 5px; border-radius: 50%; background: #b45309;"></span>
+                          <span style="font-size: 13px; font-weight: 600; color: #16161a;">Ship Friday</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 8px 10px; background: #fff; border: 1px solid #f0e2c8; border-radius: 7px;">
+                          <span style="width: 5px; height: 5px; border-radius: 50%; background: #b45309;"></span>
+                          <span style="font-size: 13px; font-weight: 600; color: #16161a;">Ship Monday</span>
+                        </div>
+                      </div>
+                      <div style="margin-top: 10px; font-size: 12.5px; color: #6b6d76;">I didn't hear a final decision.</div>
+
+                      <sc-if value="{{ decideMode }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #f4e7cf; animation: fadeIn .2s ease both;">
+                          <div style="font-size: 11.5px; font-weight: 700; color: #6b6d76; text-transform: uppercase; letter-spacing: .6px;">How should I ask?</div>
+                          <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 7px;">
+                            <div onClick="{{ askVerbally }}" style="padding: 9px 11px; border: 1px solid #e3e5ea; border-radius: 7px; background: #fff; cursor: pointer; font-size: 12.5px; font-weight: 600; color: #16161a;" style-hover="border-color: #0b5cff; background: #f5f8ff;">Ask verbally</div>
+                            <div onClick="{{ pollParticipants }}" style="padding: 9px 11px; border: 1px solid #e3e5ea; border-radius: 7px; background: #fff; cursor: pointer; font-size: 12.5px; font-weight: 600; color: #16161a;" style-hover="border-color: #0b5cff; background: #f5f8ff;">Poll participants</div>
+                          </div>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ decisionActions }}" hint-placeholder-val="{{ false }}">
+                        <div style="margin-top: 13px; display: flex; flex-direction: column; gap: 7px;">
+                          <div onClick="{{ askDecision }}" style="padding: 9px 12px; border-radius: 7px; background: #0b5cff; color: #fff; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #0747cc;">Ask for decision</div>
+                          <div style="display: flex; gap: 7px;">
+                            <div onClick="{{ resolveLater }}" style="flex: 1; padding: 8px 10px; border-radius: 7px; border: 1px solid #d5d8de; background: #fff; color: #2b2b30; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Resolve later</div>
+                            <div onClick="{{ ignore }}" style="flex: 1; padding: 8px 10px; border-radius: 7px; background: transparent; color: #6b6d76; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Ignore</div>
+                          </div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- POLL RUNNING -->
+                <sc-if value="{{ cardPoll }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #dbe3f5; border-radius: 10px; background: #fff; overflow: hidden; animation: cardIn .28s ease both;">
+                    <div style="padding: 10px 12px; border-bottom: 1px solid #eceef3; display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #0b5cff;">Poll running</span>
+                      <div style="flex: 1;"></div>
+                      <span style="font-size: 11px; color: #6b6d76;">{{ pollCount }} of 3 voted</span>
+                    </div>
+                    <div style="padding: 12px;">
+                      <div style="font-size: 13px; font-weight: 600; color: #16161a;">When should we ship?</div>
+                      <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 9px;">
+                        <sc-for list="{{ pollRows }}" as="r" hint-placeholder-count="3">
+                          <div>
+                            <div style="display: flex; justify-content: space-between; font-size: 12px; color: #2b2b30;">
+                              <span>{{ r.label }}</span>
+                              <span style="color: #6b6d76;">{{ r.votes }}</span>
+                            </div>
+                            <div style="margin-top: 4px; height: 4px; border-radius: 99px; background: #eceef3; overflow: hidden;">
+                              <div style="height: 100%; border-radius: 99px; transition: width .5s ease; background: {{ r.color }}; width: {{ r.pct }}%;"></div>
+                            </div>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- UP NEXT: WRAP -->
+                <sc-if value="{{ cardWrapPrompt }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #dfe2e8; border-radius: 10px; background: #f8f9fb; padding: 12px; animation: cardIn .28s ease both;">
+                    <div style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #475467;">Up next</div>
+                    <div style="margin-top: 7px; font-size: 12.5px; line-height: 1.5; color: #2b2b30;">2 minutes remaining. Two loops are still open.</div>
+                    <div onClick="{{ next }}" style="margin-top: 11px; padding: 9px 12px; border-radius: 7px; background: #0b5cff; color: #fff; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #0747cc;">Review wrap-up</div>
+                  </div>
+                </sc-if>
+
+                <!-- WRAP UP -->
+                <sc-if value="{{ cardWrap }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #dfe2e8; border-radius: 10px; background: #fff; overflow: hidden; animation: cardIn .28s ease both;">
+                    <div style="padding: 10px 12px; border-bottom: 1px solid #eceef3;">
+                      <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #16161a;">Meeting wrap-up</span>
+                    </div>
+                    <div style="padding: 12px;">
+                      <div style="display: flex; flex-direction: column; gap: 6px;">
+                        <sc-for list="{{ wrapRows }}" as="w" hint-placeholder-count="5">
+                          <div style="display: flex; align-items: baseline; gap: 8px;">
+                            <span style="width: 4px; height: 4px; border-radius: 50%; background: {{ w.color }};"></span>
+                            <span style="font-size: 12.5px; color: #2b2b30;">{{ w.t }}</span>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <div style="margin-top: 12px; padding: 10px 11px; background: #f5f8ff; border-radius: 7px;">
+                        <div style="font-size: 11.5px; font-weight: 700; color: #0b5cff; text-transform: uppercase; letter-spacing: .6px;">LoopIn recommendation</div>
+                        <div style="margin-top: 5px; font-size: 12.5px; line-height: 1.5; color: #16161a; text-wrap: pretty;">“Two loops remain open. I can carry these into the post-meeting confirmation flow.”</div>
+                      </div>
+                      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 7px;">
+                        <div onClick="{{ next }}" style="padding: 9px 12px; border-radius: 7px; background: #0b5cff; color: #fff; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #0747cc;">Close meeting &amp; follow up</div>
+                        <div onClick="{{ resolveNow }}" style="padding: 8px 10px; border-radius: 7px; border: 1px solid #d5d8de; background: #fff; color: #2b2b30; font-size: 12.5px; font-weight: 600; text-align: center; cursor: pointer;" style-hover="background: #f6f7f9;">Resolve now</div>
+                      </div>
+                      <div style="margin-top: 13px; padding-top: 12px; border-top: 1px solid #eceef3;">
+                        <div style="font-size: 11.5px; font-weight: 700; color: #6b6d76; text-transform: uppercase; letter-spacing: .6px;">Next</div>
+                        <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 7px;">
+                          <sc-for list="{{ nextSteps }}" as="s" hint-placeholder-count="5">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                              <span style="font-size: 12px; color: #9a9ca4;">→</span>
+                              <span style="font-size: 12.5px; color: #2b2b30;">{{ s }}</span>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-if>
+
+                <!-- HANDOFF -->
+                <sc-if value="{{ cardHandoff }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top: 14px; border: 1px solid #c9e9d5; border-radius: 10px; background: #f4fdf7; padding: 12px; animation: cardIn .28s ease both;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="color: #067647; font-size: 13px; font-weight: 700; animation: checkPop .35s ease both;">✓</span>
+                      <span style="font-size: 10.5px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #067647;">Handed off to Slack</span>
+                    </div>
+                    <div style="margin-top: 7px; font-size: 12.5px; line-height: 1.5; color: #2b2b30;">Draft notes posted. Validation poll sent to 5 required stakeholders, including Sara.</div>
+                    <div onClick="{{ restart }}" style="margin-top: 11px; padding: 8px 12px; border-radius: 7px; border: 1px solid #c9e9d5; background: #fff; color: #067647; font-size: 12.5px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #eefaf2;">Replay demo</div>
+                  </div>
+                </sc-if>
+
+                <!-- AGENDA -->
+                <div style="margin-top: 18px;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #9a9ca4;">Agenda</span>
+                    <span style="font-size: 11.5px; color: #6b6d76;">{{ covered }} of 5 covered</span>
+                  </div>
+                  <div style="margin-top: 7px; height: 3px; border-radius: 99px; background: #eceef3; overflow: hidden;">
+                    <div style="height: 100%; border-radius: 99px; background: #0b5cff; transition: width .6s ease; width: {{ coveredPct }}%;"></div>
+                  </div>
+                  <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                    <sc-for list="{{ agenda }}" as="a" hint-placeholder-count="5">
+                      <div style="display: flex; align-items: center; gap: 9px;">
+                        <span style="width: 14px; flex: 0 0 14px; text-align: center; font-size: 11.5px; color: {{ a.iconColor }};">{{ a.icon }}</span>
+                        <span style="font-size: 12.5px; color: {{ a.color }}; font-weight: {{ a.weight }};">{{ a.label }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <!-- PEOPLE -->
+                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid #eceef3;">
+                  <span style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #9a9ca4;">People</span>
+                  <div style="margin-top: 9px; display: flex; align-items: center; gap: 14px;">
+                    <div style="display: flex;">
+                      <sc-for list="{{ stack }}" as="s" hint-placeholder-count="5">
+                        <div style="width: 26px; height: 26px; border-radius: 50%; margin-left: -6px; border: 2px solid #fff; color: #fff; font-size: 9.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; background: {{ s.c }}; opacity: {{ s.op }};">{{ s.i }}</div>
+                      </sc-for>
+                    </div>
+                    <div style="font-size: 12.5px; color: #2b2b30; line-height: 1.5;">
+                      <div>5 required · 4 present</div>
+                      <div style="color: #b45309;">1 absent: Sara</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- OPEN LOOPS -->
+                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid #eceef3;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #9a9ca4;">Open loops</span>
+                    <span style="font-size: 11.5px; color: #6b6d76;">{{ openCount }}</span>
+                  </div>
+                  <sc-if value="{{ noLoops }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top: 8px; font-size: 12.5px; color: #6b6d76;">No critical issues</div>
+                  </sc-if>
+                  <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 7px;">
+                    <sc-for list="{{ loops }}" as="l" hint-placeholder-count="0">
+                      <div style="display: flex; align-items: flex-start; gap: 9px; animation: fadeIn .3s ease both;">
+                        <span style="width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex: 0 0 6px; background: {{ l.color }};"></span>
+                        <span style="font-size: 12.5px; line-height: 1.45; color: #2b2b30;">{{ l.t }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <!-- RESOLVED -->
+                <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #eceef3;">
+                  <div onClick="{{ toggleResolved }}" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <span style="font-size: 10px; color: #9a9ca4; transition: transform .2s ease; transform: rotate({{ resolvedRot }}deg);">▸</span>
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #9a9ca4;">Resolved</span>
+                    <span style="font-size: 11.5px; color: #6b6d76;">{{ resolvedCount }}</span>
+                  </div>
+                  <sc-if value="{{ resolvedOpen }}" hint-placeholder-val="{{ false }}">
+                    <div style="margin-top: 10px; display: flex; flex-direction: column; gap: 7px; animation: fadeIn .2s ease both;">
+                      <sc-for list="{{ resolved }}" as="r" hint-placeholder-count="2">
+                        <div style="display: flex; align-items: flex-start; gap: 9px;">
+                          <span style="font-size: 11px; color: #067647; margin-top: 1px;">✓</span>
+                          <span style="font-size: 12.5px; line-height: 1.45; color: #6b6d76;">{{ r }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="height: 8px;"></div>
+              </div>
+            </sc-if>
+
+            <!-- OUTCOMES TAB -->
+            <sc-if value="{{ tabOutcomes }}" hint-placeholder-val="{{ false }}">
+              <div style="flex: 1; overflow: auto; padding: 14px; animation: fadeIn .2s ease both;">
+                <div style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #9a9ca4;">Meeting outcomes</div>
+                <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 13px;">
+                  <sc-for list="{{ metrics }}" as="m" hint-placeholder-count="6">
+                    <div>
+                      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 10px;">
+                        <span style="font-size: 12.5px; font-weight: 700; color: #16161a;">{{ m.label }}</span>
+                        <span style="font-size: 12px; color: #6b6d76; text-align: right;">{{ m.value }}</span>
+                      </div>
+                      <div style="margin-top: 6px; height: 4px; border-radius: 99px; background: #eceef3; overflow: hidden;">
+                        <div style="height: 100%; border-radius: 99px; transition: width .6s ease; background: {{ m.color }}; width: {{ m.pct }}%;"></div>
+                      </div>
+                      <div style="margin-top: 5px; font-size: 11.5px; color: #6b6d76;">{{ m.sub }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid #eceef3;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #b45309;">Open loops</span>
+                    <span style="font-size: 11.5px; color: #6b6d76;">{{ openCount }}</span>
+                  </div>
+                  <div style="margin-top: 9px; display: flex; flex-direction: column; gap: 7px;">
+                    <sc-for list="{{ loops }}" as="l" hint-placeholder-count="2">
+                      <div style="display: flex; align-items: flex-start; gap: 9px;">
+                        <span style="width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex: 0 0 6px; background: {{ l.color }};"></span>
+                        <span style="font-size: 12.5px; line-height: 1.45; color: #2b2b30;">{{ l.t }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+
+                <div style="margin-top: 18px; padding-top: 16px; border-top: 1px solid #eceef3;">
+                  <div style="display: flex; align-items: baseline; justify-content: space-between;">
+                    <span style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #067647;">Resolved today</span>
+                    <span style="font-size: 11.5px; color: #6b6d76;">{{ resolvedCount }}</span>
+                  </div>
+                  <div style="margin-top: 9px; display: flex; flex-direction: column; gap: 7px;">
+                    <sc-for list="{{ resolved }}" as="r" hint-placeholder-count="4">
+                      <div style="display: flex; align-items: flex-start; gap: 9px;">
+                        <span style="font-size: 11px; color: #067647; margin-top: 1px;">✓</span>
+                        <span style="font-size: 12.5px; line-height: 1.45; color: #2b2b30;">{{ r }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="margin-top: 18px; padding: 11px 12px; background: #f8f9fb; border-radius: 8px; font-size: 12px; line-height: 1.5; color: #6b6d76; text-wrap: pretty;">LoopIn measures whether this meeting produced complete outcomes — not just what was said.</div>
+                <div style="height: 8px;"></div>
+              </div>
+            </sc-if>
+
+            <div style="flex: 0 0 auto; border-top: 1px solid #e9eaee; padding: 10px 14px; display: flex; align-items: center; gap: 9px; background: #fcfcfd;">
+              <div style="display: flex; align-items: flex-end; gap: 2px; height: 12px;">
+                <span style="width: 2px; height: 6px; border-radius: 1px; background: #0b5cff; animation: listen 1.2s ease-in-out infinite;"></span>
+                <span style="width: 2px; height: 11px; border-radius: 1px; background: #0b5cff; animation: listen 1.2s ease-in-out .2s infinite;"></span>
+                <span style="width: 2px; height: 8px; border-radius: 1px; background: #0b5cff; animation: listen 1.2s ease-in-out .4s infinite;"></span>
+              </div>
+              <span style="font-size: 11.5px; color: #6b6d76;">{{ listening }}</span>
+              <div style="flex: 1;"></div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <svg width="12" height="12" viewBox="0 0 12 12"><rect x="1" y="1" width="4.2" height="4.2" rx="1.2" fill="#36c5f0"></rect><rect x="6.8" y="1" width="4.2" height="4.2" rx="1.2" fill="#2eb67d"></rect><rect x="1" y="6.8" width="4.2" height="4.2" rx="1.2" fill="#ecb22e"></rect><rect x="6.8" y="6.8" width="4.2" height="4.2" rx="1.2" fill="#e01e5a"></rect></svg>
+                <span style="font-size: 11.5px; color: #9a9ca4;">Context loaded from Slack</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="flex: 0 0 62px; height: 62px; background: #1d1d22; border-top: 1px solid #2a2a31; display: flex; align-items: center; padding: 0 16px; gap: 6px;">
+        <sc-for list="{{ controls }}" as="c" hint-placeholder-count="7">
+          <div style="padding: 7px 11px; border-radius: 7px; display: flex; flex-direction: column; align-items: center; gap: 4px; background: {{ c.bg }};">
+            <span style="width: 16px; height: 10px; border-radius: 2px; background: {{ c.dot }};"></span>
+            <span style="font-size: 10.5px; font-weight: 600; color: {{ c.color }};">{{ c.label }}</span>
+          </div>
+        </sc-for>
+        <div style="flex: 1;"></div>
+        <div style="padding: 8px 16px; border-radius: 7px; background: #e0483d; color: #fff; font-size: 12px; font-weight: 700;">End</div>
+      </div>
+    </div>
+
+    <!-- PARTICIPANT WINDOW -->
+    <sc-if value="{{ showP }}" hint-placeholder-val="{{ false }}">
+      <div style="width: 660px; height: 762px; display: flex; flex-direction: column; gap: 10px; animation: slideInRight .35s ease both;">
+        <div style="display: flex; align-items: center; gap: 9px; padding-left: 2px;">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #6b6d76;">Participant view</span>
+          <span style="font-size: 12px; color: #8a8c95;">Bilal Ahmed — no organizer dashboard</span>
+        </div>
+        <div style="flex: 1; background: #16161a; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; border: 1px solid #2a2a31; box-shadow: 0 24px 60px rgba(0,0,0,.5);">
+          <div style="height: 40px; flex: 0 0 40px; background: #1d1d22; border-bottom: 1px solid #2a2a31; display: flex; align-items: center; padding: 0 14px; gap: 10px;">
+            <span style="color: #f2f2f5; font-size: 12.5px; font-weight: 600;">Events Project Sync</span>
+            <span style="color: #8a8c95; font-size: 11.5px;">{{ elapsed }}</span>
+          </div>
+          <div style="flex: 1; display: flex; min-height: 0;">
+            <div style="flex: 1; min-width: 0; padding: 12px; display: flex; flex-direction: column; gap: 10px; position: relative;">
+              <div style="flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; min-height: 0;">
+                <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="4">
+                  <div style="border-radius: 10px; background: #232329; display: flex; align-items: center; justify-content: center; position: relative;">
+                    <div style="width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; font-weight: 600; background: {{ t.c }};">{{ t.i }}</div>
+                    <div style="position: absolute; left: 8px; bottom: 8px; padding: 3px 7px; border-radius: 5px; background: rgba(12,12,14,.72); color: #f2f2f5; font-size: 10.5px; font-weight: 600;">{{ t.n }}</div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <sc-if value="{{ pToast }}" hint-placeholder-val="{{ false }}">
+                <div style="position: absolute; top: 20px; right: 20px; width: 296px; background: #26262c; border: 1px solid #3a3a42; border-radius: 10px; box-shadow: 0 16px 36px rgba(0,0,0,.45); overflow: hidden; animation: cardIn .3s ease both;">
+                  <div style="padding: 11px 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #33333b;">
+                    <svg width="16" height="16" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#7aa8ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="44 6" transform="rotate(-90 11 11)"></circle></svg>
+                    <span style="font-size: 12px; font-weight: 700; color: #f2f2f5;">LoopIn wants your input</span>
+                    <div style="flex: 1;"></div>
+                    <span style="color: #8a8c95; font-size: 11px;">✕</span>
+                  </div>
+                  <div style="padding: 12px;">
+                    <div style="font-size: 12.5px; line-height: 1.5; color: #d9dae1; text-wrap: pretty;">{{ pQuestion }}</div>
+                    <div onClick="{{ giveInput }}" style="margin-top: 11px; padding: 8px 12px; border-radius: 7px; background: #0b5cff; color: #fff; font-size: 12px; font-weight: 700; text-align: center; cursor: pointer;" style-hover="background: #0747cc;">Give input</div>
+                  </div>
+                </div>
+              </sc-if>
+
+              <sc-if value="{{ pBanner }}" hint-placeholder-val="{{ false }}">
+                <div style="position: absolute; top: 20px; left: 20px; right: 20px; padding: 10px 13px; border-radius: 8px; background: rgba(38,38,44,.96); border: 1px solid #3a3a42; display: flex; align-items: center; gap: 10px; animation: cardIn .3s ease both;">
+                  <svg width="14" height="14" viewBox="0 0 22 22" style="flex: 0 0 14px;"><circle cx="11" cy="11" r="8" fill="none" stroke="#7aa8ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="44 6" transform="rotate(-90 11 11)"></circle></svg>
+                  <span style="font-size: 12px; line-height: 1.45; color: #e7e8ee; text-wrap: pretty;">LoopIn: 8 minutes remaining. One agenda item hasn't been covered: Absent stakeholder behavior.</span>
+                </div>
+              </sc-if>
+
+              <div style="flex: 0 0 auto; display: flex; justify-content: center;">
+                <div style="max-width: 420px; padding: 7px 12px; border-radius: 8px; background: rgba(12,12,14,.82); border: 1px solid #2a2a31; color: #c9cad2; font-size: 11.5px; line-height: 1.45; text-align: center;">{{ caption }}</div>
+              </div>
+            </div>
+
+            <sc-if value="{{ pPanel }}" hint-placeholder-val="{{ false }}">
+              <div style="width: 286px; flex: 0 0 286px; background: #fff; border-left: 1px solid #2a2a31; display: flex; flex-direction: column; animation: fadeIn .25s ease both;">
+                <div style="flex: 0 0 auto; padding: 12px 13px; border-bottom: 1px solid #e9eaee; display: flex; align-items: center; gap: 8px;">
+                  <svg width="18" height="18" viewBox="0 0 22 22"><circle cx="11" cy="11" r="8" fill="none" stroke="#0b5cff" stroke-width="3" stroke-linecap="round" stroke-dasharray="44 6" transform="rotate(-90 11 11)"></circle></svg>
+                  <span style="font-size: 13px; font-weight: 700; color: #16161a;">LoopIn</span>
+                  <div style="flex: 1;"></div>
+                  <span style="color: #9a9ca4; font-size: 12px;">✕</span>
+                </div>
+                <div style="flex: 1; padding: 14px 13px; overflow: auto;">
+                  <sc-if value="{{ pAsk }}" hint-placeholder-val="{{ false }}">
+                    <div>
+                      <div style="font-size: 13.5px; font-weight: 700; color: #16161a; line-height: 1.4; text-wrap: pretty;">{{ pPrompt }}</div>
+                      <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 7px;">
+                        <sc-for list="{{ pOptions }}" as="o" hint-placeholder-count="4">
+                          <div onClick="{{ o.pick }}" style="padding: 9px 11px; border: 1px solid #e3e5ea; border-radius: 7px; background: #fff; cursor: pointer; font-size: 12.5px; font-weight: 600; color: #16161a; text-align: center;" style-hover="border-color: #0b5cff; background: #f5f8ff;">{{ o.label }}</div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ pThanks }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 18px; animation: fadeIn .25s ease both;">
+                      <div style="position: relative; width: 34px; height: 34px;">
+                        <svg width="34" height="34" viewBox="0 0 34 34"><circle cx="17" cy="17" r="15" fill="none" stroke="#067647" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="95" style="animation: ringClose .7s cubic-bezier(.4,0,.2,1) both;" transform="rotate(-90 17 17)"></circle></svg>
+                        <span style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #067647; font-size: 15px; font-weight: 700; animation: checkPop .35s ease .6s both;">✓</span>
+                      </div>
+                      <div style="margin-top: 11px; font-size: 13px; font-weight: 700; color: #16161a;">{{ pThanksTitle }}</div>
+                      <div style="margin-top: 5px; font-size: 12px; line-height: 1.5; color: #6b6d76;">{{ pThanksSub }}</div>
+                    </div>
+                  </sc-if>
+                </div>
+                <div style="flex: 0 0 auto; padding: 10px 13px; border-top: 1px solid #e9eaee; background: #fcfcfd; font-size: 11px; color: #6b6d76;">Only you see this</div>
+              </div>
+            </sc-if>
+          </div>
+          <div style="flex: 0 0 54px; background: #1d1d22; border-top: 1px solid #2a2a31; display: flex; align-items: center; padding: 0 14px; gap: 5px;">
+            <sc-for list="{{ pControls }}" as="c" hint-placeholder-count="5">
+              <div style="padding: 6px 9px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; gap: 3px; background: {{ c.bg }};">
+                <span style="width: 14px; height: 9px; border-radius: 2px; background: {{ c.dot }};"></span>
+                <span style="font-size: 9.5px; font-weight: 600; color: {{ c.color }};">{{ c.label }}</span>
+              </div>
+            </sc-for>
+            <div style="flex: 1;"></div>
+            <div style="padding: 7px 13px; border-radius: 6px; background: #2a2a31; color: #d9dae1; font-size: 11px; font-weight: 700;">Leave</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- DEMO CHROME -->
+  <div style="display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-radius: 10px; background: #1a1a1f; border: 1px solid #2a2a31; width: 100%; box-sizing: border-box;">
+    <span style="font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: #6b6d76;">LoopIn prototype</span>
+    <span style="font-size: 12px; color: #b9bbc4;">{{ sceneLabel }}</span>
+    <span style="font-size: 12px; color: #6b6d76;">{{ sceneIndex }}</span>
+    <div style="flex: 1;"></div>
+    <div onClick="{{ prev }}" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #33333b; color: #b9bbc4; font-size: 11.5px; font-weight: 600; cursor: pointer;" style-hover="background: #26262c;">Back</div>
+    <div onClick="{{ next }}" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #33333b; color: #b9bbc4; font-size: 11.5px; font-weight: 600; cursor: pointer;" style-hover="background: #26262c;">Skip ahead</div>
+    <div onClick="{{ restart }}" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #33333b; color: #b9bbc4; font-size: 11.5px; font-weight: 600; cursor: pointer;" style-hover="background: #26262c;">Restart</div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1900,&quot;height&quot;:880},&quot;tickClock&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo behaviour&quot;},&quot;autoCloseLoop&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo behaviour&quot;},&quot;showParticipantWindow&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo behaviour&quot;}}">
+const PP = {
+  omar: { n: 'Omar Shah (You)', i: 'OS', c: '#3f5a8a' },
+  ayesha: { n: 'Ayesha Khan', i: 'AK', c: '#7a5a86' },
+  bilal: { n: 'Bilal Ahmed', i: 'BA', c: '#4a6e63' },
+  hamza: { n: 'Hamza Iqbal', i: 'HI', c: '#8a6a45' },
+  sara: { n: 'Sara Nasir', i: 'SN', c: '#6b6d76' }
+};
+
+const AG = ['RTMS implementation', 'Polly MCP integration', 'Confirmed notes workflow', 'Absent stakeholder behavior', 'Demo rehearsal'];
+
+const ORDER = ['start', 'detect', 'ask', 'awaiting', 'resolved', 'agenda', 'nudge', 'decision', 'decideMode', 'poll', 'pollSent', 'wrapPrompt', 'wrap', 'ended'];
+
+const SC = {
+  start:      { base: 724,  label: 'Meeting start', agenda: 'ddcpp', speak: 'ayesha', health: ['On track', 'ok'], cap: '…so the RTMS stream has been stable all week, we tested it twice.' },
+  detect:     { base: 862,  label: 'Detection — owner missing', agenda: 'ddcpp', speak: 'ayesha', health: ['1 open loop', 'open'], cap: '“We should update the final Slack message so it includes the priority ranking.”' },
+  ask:        { base: 878,  label: 'Organizer approval', agenda: 'ddcpp', speak: 'ayesha', health: ['1 open loop', 'open'], cap: '“We should update the final Slack message so it includes the priority ranking.”' },
+  awaiting:   { base: 892,  label: 'Participant input', agenda: 'ddcpp', speak: 'bilal', health: ['Resolving', 'info'], cap: 'Sure — someone should own the Slack copy after this.' },
+  resolved:   { base: 920,  label: 'Loop closed', agenda: 'dddcp', speak: 'hamza', health: ['On track', 'ok'], cap: 'Good — so Hamza owns the Slack message with the ranking.' },
+  agenda:     { base: 1330, label: 'Missed agenda item', agenda: 'dddpp', speak: 'hamza', health: ['Needs attention', 'attn'], cap: '…and the demo rehearsal we could do Thursday morning.' },
+  nudge:      { base: 1346, label: 'Nudge sent', agenda: 'dddcp', speak: 'omar', health: ['On track', 'ok'], cap: 'Let’s jump back to absent stakeholder behaviour for a minute.' },
+  decision:   { base: 1540, label: 'Ambiguous decision', agenda: 'ddddp', speak: 'bilal', health: ['1 decision open', 'open'], cap: 'Friday is tight. Monday gives us a weekend buffer.' },
+  decideMode: { base: 1552, label: 'Choose how to ask', agenda: 'ddddp', speak: 'bilal', health: ['1 decision open', 'open'], cap: 'Friday is tight. Monday gives us a weekend buffer.' },
+  poll:       { base: 1565, label: 'Poll participants', agenda: 'ddddp', speak: 'ayesha', health: ['Resolving', 'info'], cap: 'Let’s put it to a quick vote.' },
+  pollSent:   { base: 1590, label: 'Decision confirmed', agenda: 'ddddp', speak: 'omar', health: ['On track', 'ok'], cap: 'Alright — Friday it is.' },
+  wrapPrompt: { base: 1680, label: 'Two minutes left', agenda: 'ddddp', speak: 'omar', health: ['2 loops open', 'attn'], cap: 'We’re coming up on time.' },
+  wrap:       { base: 1685, label: 'Meeting wrap-up', agenda: 'ddddp', speak: 'omar', health: ['2 loops open', 'attn'], cap: 'We’re coming up on time.' },
+  ended:      { base: 1780, label: 'Handed off', agenda: 'ddddp', speak: 'omar', health: ['Carried to follow-up', 'info'], cap: 'Thanks everyone.' }
+};
+
+const HEALTH = {
+  ok:   { bg: '#f4fdf7', border: '#d8efe2', dot: '#12b76a', text: '#067647' },
+  open: { bg: '#fffbf4', border: '#f0ddbc', dot: '#f59e0b', text: '#b45309' },
+  attn: { bg: '#fffaf9', border: '#f3cfcb', dot: '#f04438', text: '#b42318' },
+  info: { bg: '#f7f9ff', border: '#dbe3f5', dot: '#0b5cff', text: '#0b5cff' }
+};
+
+class Component extends DCLogic {
+  state = {
+    i: 0, t: 0, tab: 'now', resolvedOpen: false,
+    assignMode: false, decideMode: false,
+    audience: 'select', sel: { ayesha: true, bilal: true, hamza: true, sara: false }, alsoAsk: true,
+    pOpen: false, pAnswer: null, pollAnswer: null, dismissed: false
+  };
+
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      if (this.props.tickClock !== false) this.setState(s => ({ t: s.t + 1 }));
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+
+  key() { return ORDER[this.state.i]; }
+  go(k) {
+    const i = ORDER.indexOf(k);
+    this.setState({ i: i < 0 ? 0 : i, t: 0, assignMode: false, decideMode: false, pOpen: false, dismissed: false });
+  }
+  step(d) {
+    const i = Math.min(ORDER.length - 1, Math.max(0, this.state.i + d));
+    this.setState({ i, t: 0, assignMode: false, decideMode: false, pOpen: false, dismissed: false,
+      pAnswer: i >= ORDER.indexOf('resolved') ? (this.state.pAnswer || 'Hamza Iqbal') : null,
+      pollAnswer: i >= ORDER.indexOf('pollSent') ? (this.state.pollAnswer || 'Friday') : null });
+  }
+  fmt(s) { const m = Math.floor(s / 60), r = s % 60; return m + ':' + String(r).padStart(2, '0'); }
+
+  renderVals() {
+    const k = this.key(), sc = SC[k], st = this.state;
+    const elapsedS = Math.min(1800, sc.base + st.t);
+    const H = HEALTH[sc.health[1]];
+    const ownerFixed = this.state.i >= ORDER.indexOf('resolved');
+    const shipDecided = this.state.i >= ORDER.indexOf('pollSent');
+    const nudged = this.state.i >= ORDER.indexOf('nudge');
+
+    const agenda = AG.map((label, n) => {
+      const s = sc.agenda[n];
+      if (s === 'd') return { label, icon: '✓', iconColor: '#12b76a', color: '#6b6d76', weight: 400 };
+      if (s === 'c') return { label, icon: '→', iconColor: '#0b5cff', color: '#16161a', weight: 700 };
+      return { label, icon: '○', iconColor: '#b0b2ba', color: '#6b6d76', weight: 400 };
+    });
+    const covered = sc.agenda.split('').filter(c => c === 'd').length;
+
+    let loops = [];
+    if (k === 'detect' || k === 'ask' || k === 'awaiting') loops = [{ t: 'Action item without owner — Slack message priority ranking', color: '#f59e0b' }];
+    if (k === 'agenda') loops = [{ t: '“Absent stakeholder behavior” not discussed', color: '#f04438' }];
+    if (k === 'decision' || k === 'decideMode' || k === 'poll') loops = [{ t: 'Launch date unresolved — Friday or Monday', color: '#f59e0b' }];
+    if (k === 'pollSent') loops = [{ t: 'Demo rehearsal not discussed', color: '#f04438' }];
+    if (k === 'wrapPrompt' || k === 'wrap' || k === 'ended') loops = [
+      { t: 'Demo rehearsal not discussed', color: '#f04438' },
+      { t: 'Sara — required input outstanding', color: '#f59e0b' }
+    ];
+    if (st.dismissed) loops = loops.map(l => ({ t: l.t + ' (dismissed)', color: '#c3c5cc' }));
+
+    const resolved = ['RTMS workaround agreed', 'MCP scope confirmed'];
+    if (ownerFixed) resolved.push('Slack message owner assigned — Hamza');
+    if (nudged) resolved.push('Absent stakeholder behavior covered');
+    if (shipDecided) resolved.push('Launch date confirmed — Friday');
+
+    const responded = st.pAnswer ? 3 : 1;
+    const pollCount = st.pollAnswer ? 3 : 1;
+    const pollRows = [
+      { label: 'Friday', votes: st.pollAnswer ? 2 : 1, pct: st.pollAnswer ? 67 : 33, color: '#0b5cff' },
+      { label: 'Monday', votes: 1, pct: 33, color: '#8a8c95' },
+      { label: 'Need more information', votes: 0, pct: 0, color: '#c3c5cc' }
+    ];
+
+    const tiles = ['omar', 'ayesha', 'bilal', 'hamza'].map(id => ({
+      n: PP[id].n, i: PP[id].i, c: PP[id].c,
+      ring: sc.speak === id ? '#12b76a' : 'transparent',
+      badge: sc.speak === id ? 'speaking' : ''
+    }));
+    const stack = ['omar', 'ayesha', 'bilal', 'hamza', 'sara'].map(id => ({ i: PP[id].i, c: PP[id].c, op: id === 'sara' ? 0.35 : 1 }));
+
+    const askList = ['ayesha', 'bilal', 'hamza', 'sara'].map(id => {
+      const on = id === 'sara' ? false : (st.audience === 'everyone' ? true : !!st.sel[id]);
+      return {
+        n: PP[id].n.replace(' (You)', '').split(' ')[0], i: PP[id].i, c: PP[id].c,
+        note: id === 'sara' ? '— not in meeting' : '',
+        check: on ? '✓' : '', boxBg: on ? '#0b5cff' : '#fff', boxBorder: on ? '#0b5cff' : '#c3c5cc',
+        cursor: id === 'sara' ? 'not-allowed' : 'pointer', opacity: id === 'sara' ? 0.45 : 1,
+        toggle: id === 'sara' ? () => {} : () => this.setState(s => ({ audience: 'select', sel: Object.assign({}, s.sel, { [id]: !s.sel[id] }) }))
+      };
+    });
+
+    const people3 = ['ayesha', 'bilal', 'hamza'].map(id => ({
+      n: PP[id].n, i: PP[id].i, c: PP[id].c,
+      assign: () => { this.setState({ pAnswer: PP[id].n }); this.go('resolved'); }
+    }));
+
+    const isPollScene = k === 'poll' || (k === 'pollSent' && !!st.pollAnswer);
+    const pQuestion = k === 'poll' || k === 'pollSent'
+      ? '“When should we ship?”'
+      : '“Who should own updating the final Slack message with priority rankings?”';
+    const pOptions = (k === 'poll' ? ['Friday', 'Monday', 'Need more information'] : ['Ayesha', 'Bilal', 'Hamza', 'Someone else'])
+      .map(label => ({
+        label,
+        pick: k === 'poll'
+          ? () => { this.setState({ pollAnswer: label }); setTimeout(() => { if (this.props.autoCloseLoop !== false) this.go('pollSent'); }, 1400); }
+          : () => { this.setState({ pAnswer: label === 'Someone else' ? 'Someone else' : PP[label.toLowerCase()].n }); setTimeout(() => { if (this.props.autoCloseLoop !== false) this.go('resolved'); }, 1500); }
+      }));
+
+    const metrics = [
+      { label: 'Agenda', value: covered + ' / 5 covered', sub: (5 - covered) + ' remaining', pct: covered / 5 * 100, color: '#0b5cff' },
+      { label: 'Decisions', value: shipDecided ? '4 confirmed' : '3 confirmed · 1 unresolved', sub: shipDecided ? 'All decisions confirmed' : 'Launch date still open', pct: shipDecided ? 100 : 75, color: shipDecided ? '#12b76a' : '#f59e0b' },
+      { label: 'Action items', value: ownerFixed ? '5 detected · 5 owned' : '5 detected · 4 owned', sub: ownerFixed ? 'Every action item has an owner' : '1 missing owner', pct: ownerFixed ? 100 : 80, color: ownerFixed ? '#12b76a' : '#f59e0b' },
+      { label: 'Priorities', value: '3 established · 2 unclear', sub: 'Ranking to be confirmed in Slack', pct: 60, color: '#f59e0b' },
+      { label: 'Blockers', value: '1 detected · 1 has next step', sub: 'No blocker without a next step', pct: 100, color: '#12b76a' },
+      { label: 'Attendance', value: '4 / 5 required present', sub: 'Sara absent — will be asked after', pct: 80, color: '#f59e0b' }
+    ];
+
+    const ctl = (label, active) => ({ label, bg: active ? '#0b5cff' : 'transparent', dot: active ? '#ffffff' : '#8a8c95', color: active ? '#ffffff' : '#b9bbc4' });
+
+    return {
+      elapsed: this.fmt(elapsedS),
+      remaining: this.fmt(Math.max(0, 1800 - elapsedS)),
+      caption: sc.cap,
+      sceneLabel: sc.label,
+      sceneIndex: (this.state.i + 1) + ' / ' + ORDER.length,
+      listening: k === 'ended' ? 'LoopIn has stopped listening' : 'LoopIn is listening',
+
+      healthLabel: sc.health[0], healthBg: H.bg, healthBorder: H.border, healthDot: H.dot, healthText: H.text,
+
+      tabNow: st.tab === 'now', tabOutcomes: st.tab === 'outcomes',
+      nowColor: st.tab === 'now' ? '#16161a' : '#9a9ca4', nowBorder: st.tab === 'now' ? '#0b5cff' : 'transparent',
+      outColor: st.tab === 'outcomes' ? '#16161a' : '#9a9ca4', outBorder: st.tab === 'outcomes' ? '#0b5cff' : 'transparent',
+      showNow: () => this.setState({ tab: 'now' }), showOutcomes: () => this.setState({ tab: 'outcomes' }),
+
+      cardOwner: (k === 'detect') && !st.dismissed,
+      ownerActions: !st.assignMode, assignMode: st.assignMode, people3,
+      cardAsk: k === 'ask',
+      cardAwaiting: k === 'awaiting',
+      cardClosed: k === 'resolved' || (k === 'pollSent' && !st.dismissed),
+      cardAgenda: k === 'agenda' && !st.dismissed,
+      cardNudged: k === 'nudge',
+      cardDecision: k === 'decision' || k === 'decideMode',
+      decisionActions: !st.decideMode, decideMode: st.decideMode,
+      cardPoll: k === 'poll',
+      cardWrapPrompt: k === 'wrapPrompt',
+      cardWrap: k === 'wrap',
+      cardHandoff: k === 'ended',
+
+      closedTitle: k === 'pollSent' ? 'Ship Friday' : 'Update final Slack message with priority ranking',
+      closedMeta: k === 'pollSent' ? 'Decision: Friday' : 'Owner: ' + (st.pAnswer || 'Hamza Iqbal'),
+      closedConfirm: k === 'pollSent' ? 'Confirmed by 3 participants' : 'Confirmed by 3 participants',
+
+      responded, respPct: responded / 3 * 100,
+      awaitNote: st.pAnswer ? st.pAnswer + ' was proposed by the room.' : 'Waiting for participants. No one has been interrupted.',
+      pollCount, pollRows,
+
+      agenda, covered, coveredPct: covered / 5 * 100,
+      stack, tiles,
+      loops, openCount: loops.length ? String(loops.length) : '', noLoops: loops.length === 0,
+      resolved, resolvedCount: String(resolved.length),
+      resolvedOpen: st.resolvedOpen, resolvedRot: st.resolvedOpen ? 90 : 0,
+      toggleResolved: () => this.setState(s => ({ resolvedOpen: !s.resolvedOpen })),
+
+      askList, evBorder: st.audience === 'everyone' ? '#0b5cff' : '#c3c5cc', evDot: st.audience === 'everyone' ? '#0b5cff' : 'transparent',
+      selBorder: st.audience === 'select' ? '#0b5cff' : '#c3c5cc', selDot: st.audience === 'select' ? '#0b5cff' : 'transparent',
+      setEveryone: () => this.setState({ audience: 'everyone' }), setSelect: () => this.setState({ audience: 'select' }),
+      alsoBg: st.alsoAsk ? '#0b5cff' : '#fff', alsoBorder: st.alsoAsk ? '#0b5cff' : '#c3c5cc', alsoCheck: st.alsoAsk ? '✓' : '',
+      toggleAlsoAsk: () => this.setState(s => ({ alsoAsk: !s.alsoAsk })),
+
+      askRoom: () => this.go('ask'),
+      assignOwner: () => this.setState({ assignMode: true }),
+      ignore: () => this.setState({ dismissed: true }),
+      send: () => this.go('awaiting'),
+      cancel: () => this.go('detect'),
+      nudge: () => this.go('nudge'),
+      followUp: () => this.go('decision'),
+      askDecision: () => this.setState({ decideMode: true }),
+      askVerbally: () => this.go('pollSent'),
+      pollParticipants: () => this.go('poll'),
+      resolveLater: () => this.go('wrapPrompt'),
+      resolveNow: () => this.setState({ tab: 'outcomes' }),
+      next: () => this.step(1), prev: () => this.step(-1), restart: () => this.setState({ i: 0, t: 0, tab: 'now', pAnswer: null, pollAnswer: null, pOpen: false, dismissed: false, resolvedOpen: false }),
+
+      showP: this.props.showParticipantWindow !== false && (k === 'awaiting' || k === 'nudge' || k === 'poll' || (k === 'pollSent' && !!st.pollAnswer)),
+      pToast: (k === 'awaiting' || k === 'poll') && !st.pOpen,
+      pPanel: st.pOpen || (k === 'pollSent' && !!st.pollAnswer),
+      pBanner: k === 'nudge',
+      pQuestion,
+      pAsk: st.pOpen && (k === 'poll' ? !st.pollAnswer : !st.pAnswer),
+      pThanks: k === 'poll' ? !!st.pollAnswer : (k === 'pollSent' ? true : !!st.pAnswer),
+      pThanksTitle: 'Sent to LoopIn',
+      pThanksSub: isPollScene ? 'Your vote is counted. Results stay in the meeting.' : 'Thanks — the organizer sees the response, not who said what first.',
+      pPrompt: k === 'poll' ? 'When should we ship?' : 'Who should own this?',
+      pOptions,
+      giveInput: () => this.setState({ pOpen: true }),
+
+      metrics,
+      wrapRows: [
+        { t: covered + ' of 5 agenda items covered', color: '#0b5cff' },
+        { t: '5 action items', color: '#0b5cff' },
+        { t: ownerFixed ? '5 owners confirmed' : '4 owners confirmed', color: '#12b76a' },
+        { t: shipDecided ? 'All decisions confirmed' : '1 open decision', color: shipDecided ? '#12b76a' : '#f59e0b' },
+        { t: '1 required stakeholder absent', color: '#f59e0b' }
+      ],
+      nextSteps: ['Draft notes to Slack', 'Ask Sara for missing input', 'Send validation poll', 'Wait for quorum', 'Publish confirmed notes'],
+
+      controls: [ctl('Mute'), ctl('Video'), ctl('Participants'), ctl('Chat'), ctl('Share'), ctl('Apps', true), ctl('More')],
+      pControls: [ctl('Mute'), ctl('Video'), ctl('Chat'), ctl('Apps', st.pOpen)]
+    };
+  }
+}
+</script>
+</body>
+</html>

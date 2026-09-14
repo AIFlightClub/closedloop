@@ -1,16 +1,24 @@
 // Import the RTMS SDK
 import rtms from "@zoom/rtms";
 import crypto from "node:crypto";
-import { createWriteStream, mkdirSync } from "node:fs";
+import { createWriteStream, mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { finished } from "node:stream/promises";
 import express from "express";
+import { createServer } from "node:http";
+import { fileURLToPath } from "node:url";
+import { createService } from "./loopin/server/service.js";
 import { createPolly } from "./polly/index.js";
 import { createLoop } from "./loop/index.js";
 import { records, startRecord, updateRecord } from "./meeting-records.js";
 import { generateNotes } from "./generate-notes.js";
 
 const clients = new Map();
+// Native panels are opt-in and independent of Polly. Config contains the Zoom
+// meeting UUID, scheduled end, required people and verified Zoom user mappings.
+const nativePanel = process.env.LOOPIN_CONFIG
+  ? createService({ config: JSON.parse(readFileSync(process.env.LOOPIN_CONFIG, "utf8")) })
+  : null;
 const transcriptsDirectory = join(process.cwd(), "transcripts");
 
 mkdirSync(transcriptsDirectory, { recursive: true });
@@ -84,6 +92,7 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
         meeting.transcriptStream.end();
         await flushed;
         loop?.live.stop(streamId);
+        nativePanel?.stopStream(meeting.zoomMeetingId, streamId);
         updateRecord(streamId, { stoppedAt: new Date().toISOString(), status: "pending" });
         await generateNotes(streamId);
       } catch (error) {
@@ -124,8 +133,9 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
 
   // The live detector watches the transcript for a poll-worthy moment (an explicit
   // "let's poll this", an A-or-B with no call, an action with no owner).
-  const meeting = { client, transcriptStream, transcriptPath, stopping: false, live: loop?.live.start(streamId) ?? null };
+  const meeting = { client, transcriptStream, transcriptPath, stopping: false, zoomMeetingId: payload?.meeting_uuid, live: nativePanel?.meetingId === payload?.meeting_uuid ? null : loop?.live.start(streamId) ?? null };
   clients.set(streamId, meeting);
+  nativePanel?.startStream(payload?.meeting_uuid, streamId);
   transcriptStream.write(`# Zoom RTMS transcript\n# Stream: ${streamId}\n# Started: ${new Date().toISOString()}\n\n`);
   console.log(`Writing live transcript to ${transcriptPath}`);
 
@@ -138,6 +148,7 @@ const handleZoomWebhook = ({ event, payload }, req, res) => {
     console.log(line.trimEnd());
     transcriptStream.write(line);
     meeting.live?.push({ speaker, text, ts: timestamp });
+    void nativePanel?.push(meeting.zoomMeetingId, { speaker, text, ts: timestamp });
   });
 
   // Join the meeting using the webhook payload directly
@@ -158,6 +169,10 @@ if (polly) {
 }
 if (loop) app.use("/loop", loop.router);
 
-app.listen(port, () => {
+if (nativePanel) app.use("/loopin", nativePanel.router);
+app.use("/loopin", express.static(fileURLToPath(new URL("./loopin/dist", import.meta.url))));
+const httpServer = createServer(app);
+nativePanel?.attach(httpServer);
+httpServer.listen(port, () => {
   console.log(`Listening on http://localhost:${port} — Zoom webhook: POST ${zoomPath}${polly ? " · Polly: /polls" : ""}${loop ? ` · Loop: /loop (callback: ${loop.notifier.url ?? "none"})` : ""}`);
 });

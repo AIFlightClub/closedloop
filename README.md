@@ -208,3 +208,11 @@ For complete parameter options and detailed documentation:
 - 📹 **[Video Parameters](https://zoom.github.io/rtms/js/interfaces/VideoParameters.html)** - Complete video configuration options
 - 🖥️ **[Deskshare Parameters](https://zoom.github.io/rtms/js/interfaces/VideoParameters.html)** - Complete deskshare configuration options
 - 📖 **[Full API Documentation](https://zoom.github.io/rtms/js/)** - Complete SDK reference
+
+## LoopIn native Zoom panel
+
+The new organizer/attendee panel and fully offline fallback live in
+[loopin/README.md](loopin/README.md). Build with `npm --prefix loopin ci` and
+`npm run loopin:build`; preview with `npm run loopin:serve`. The independent
+`npm run loopin:replay` validates the recorded detector fixture without sending
+Slack or Polly polls. Native Zoom mode is opt-in via `LOOPIN_CONFIG`.

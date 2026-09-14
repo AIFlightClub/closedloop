@@ -1,0 +1,25 @@
+{
+  "passed": 18,
+  "checks": [
+    "reset",
+    "owner detection",
+    "compose",
+    "send",
+    "open prompt",
+    "vote",
+    "majority",
+    "continue",
+    "skip scene",
+    "skip scene",
+    "skip scene",
+    "skip scene",
+    "date compose",
+    "date send",
+    "date prompt",
+    "verbal supersession",
+    "attendee-only",
+    "both views"
+  ],
+  "method": "Codex browser automation, local demo at 1280 × 720",
+  "date": "2026-09-12"
+}

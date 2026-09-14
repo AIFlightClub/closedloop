@@ -1,0 +1,88 @@
+/* LoopIn — design tokens extracted from "LoopIn Zoom App.dc.html"
+   The panel is a LIGHT surface sitting inside Zoom's dark client. Do not
+   invert it; the contrast is the point. */
+
+:root {
+  /* Brand / action */
+  --li-blue:            #0b5cff;   /* primary action, active tab, current agenda item */
+  --li-blue-hover:      #0747cc;
+  --li-blue-bg:         #f5f8ff;   /* info card background */
+  --li-blue-border:     #dbe3f5;
+
+  /* Panel surface */
+  --li-surface:         #ffffff;   /* panel background */
+  --li-surface-2:       #f6f7f9;   /* card / section background */
+  --li-border:          #e9eaee;   /* hairline between sections */
+  --li-border-2:        #e3e5ea;
+
+  /* Text */
+  --li-text:            #16161a;   /* primary */
+  --li-text-2:          #6b6d76;   /* secondary, agenda labels */
+  --li-text-3:          #9a9ca4;   /* tertiary, window controls */
+  --li-text-4:          #b0b2ba;   /* uncovered agenda bullet */
+
+  /* Status — success / closed loop */
+  --li-ok-bg:           #f4fdf7;
+  --li-ok-border:       #d8efe2;
+  --li-ok-dot:          #12b76a;
+  --li-ok-text:         #067647;
+
+  /* Status — open loop (warning) */
+  --li-open-bg:         #fffbf4;
+  --li-open-border:     #f0ddbc;
+  --li-open-dot:        #f59e0b;
+  --li-open-text:       #b45309;
+
+  /* Status — needs attention (critical) */
+  --li-attn-bg:         #fffaf9;
+  --li-attn-border:     #f3cfcb;
+  --li-attn-dot:        #f04438;
+  --li-attn-text:       #b42318;
+
+  /* Status — resolving (info) */
+  --li-info-bg:         #f7f9ff;
+  --li-info-border:     #dbe3f5;
+  --li-info-dot:        #0b5cff;
+  --li-info-text:       #0b5cff;
+
+  /* Zoom client chrome (mock only — the real client draws this) */
+  --zm-bg:              #0e0e11;
+  --zm-window:          #16161a;
+  --zm-titlebar:        #1d1d22;
+  --zm-tile:            #26262c;
+  --zm-border:          #2a2a31;
+  --zm-text:            #f2f2f5;
+  --zm-text-2:          #8a8c95;
+
+  /* Type — Open Sans 400 / 600 / 700 */
+  --li-font: 'Open Sans', system-ui, -apple-system, sans-serif;
+  --li-fs-panel-title:  14px;  /* "LoopIn" wordmark */
+  --li-fs-heading:      13px;  /* meeting name, card titles */
+  --li-fs-body:         12px;  /* card body, agenda labels */
+  --li-fs-meta:         11px;  /* section labels, counters, badges */
+  --li-fs-micro:        10px;  /* footer status */
+  --li-lh:              1.45;
+  --li-label-tracking:  .6px;  /* uppercase section labels */
+
+  /* Shape */
+  --li-radius-card:     10px;
+  --li-radius-control:  7px;   /* buttons, list rows */
+  --li-radius-chip:     99px;
+  --li-radius-bar:      2px;
+
+  /* Layout */
+  --li-panel-width:     372px; /* Zoom side panel, fixed */
+  --li-pad-x:           14px;
+  --li-pad-y:           12px;
+  --li-gap:             9px;
+}
+
+/* Section label: uppercase, 11px, letter-spaced, --li-text-2 */
+/* Primary button: --li-blue bg, #fff text, 7px radius, full width, 13px/600 */
+/* Secondary button: #fff bg, --li-border-2 border, --li-text, same metrics */
+/* Status card: 10px radius, 1px border, matching bg/border/text from the status set */
+
+@keyframes li-cardIn   { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes li-checkPop { 0% { opacity: 0; transform: scale(.5); } 60% { opacity: 1; transform: scale(1.15); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes li-ringClose{ from { stroke-dashoffset: 76; } to { stroke-dashoffset: 0; } }
+@keyframes li-listen   { 0%,100% { opacity: .35; transform: scaleY(.5); } 50% { opacity: 1; transform: scaleY(1); } }

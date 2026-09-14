@@ -525,3 +525,9 @@ ngrok.yml
 polly/results/
 polly/inbox/*
 !polly/inbox/.gitkeep
+
+# LoopIn implementation and test sources
+!loopin/**/*.js
+loopin/test-results/
+loopin/playwright-report/
+loopin/meeting.local.json
